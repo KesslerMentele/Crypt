@@ -1,3 +1,6 @@
 [submodule "Crypt/vendor/spdlog"]
 	path = Crypt/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Crypt/vendor/GLFW"]
+	path = Crypt/vendor/GLFW
+	url = https://github.com/TheCherno/GLFW

@@ -1,7 +1,11 @@
 #pragma once
 
 #include "Core.h"
-#include "Events/Event.h"
+#include "Crypt/Events/ApplicationEvent.h"
+#include "Crypt/LayerStack.h"
+#include "Crypt/Events/Event.h"
+
+#include "Window.h"
 
 namespace Crypt {
 	class CRYPT_API Application
@@ -9,7 +13,26 @@ namespace Crypt {
 	public:
 		Application();
 		virtual ~Application();
+
 		void Run();
+
+		void OnEvent(Event& e);
+
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* layer);
+
+		inline static Application& Get() { return *s_Instance; }
+		inline Window& GetWindow() { return *m_Window; }
+	private:
+		bool OnWindowClose(WindowCloseEvent& e);
+
+		std::unique_ptr<Window> m_Window;
+		bool m_Running = true;
+		LayerStack m_LayerStack;
+
+	private:
+		static Application* s_Instance;
+
 	};	
 
 	// To be defined in Client

@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Crypt/Log.h"
+
 #ifdef CRY_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif
