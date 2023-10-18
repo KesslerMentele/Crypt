@@ -10,6 +10,10 @@
 	#error Crypt only supports Windows!
 #endif
 
+#ifdef CRY_DEBUG
+	#define CRY_ENABLE_ASSERTS
+#endif
+
 #ifdef CRY_ENABLE_ASSERTS
 	#define CRY_ASSERT(x,...) {if(!(x)) { CRY_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#define CRY_CORE_ASSERT(x,...) {if(!(x)) { CRY_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }

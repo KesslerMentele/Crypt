@@ -11,12 +11,19 @@ public:
 
 	void OnUpdate() override
 	{
-		CRY_INFO("ExampleLayer::Update");
+
 	}
 
 	void OnEvent(Crypt::Event& event) override
 	{
-		CRY_TRACE("{0}", event);
+		if (event.GetEventType() == Crypt::EventType::KeyPressed)
+		{
+			Crypt::KeyPressedEvent& e = (Crypt::KeyPressedEvent&)event;
+			if (e.GetKeyCode() == CRY_KEY_TAB)
+				CRY_TRACE("Tab key is pressed!");
+
+			CRY_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 
 

@@ -14,10 +14,13 @@ workspace "Crypt"
  IncludeDir["Glad"] = "Crypt/vendor/Glad/include"
  IncludeDir["ImGui"] = "Crypt/vendor/imgui"
 
+  startproject "Sandbox"
 
  include "Crypt/vendor/GLFW"
  include "Crypt/vendor/Glad"
  include "Crypt/vendor/imgui"
+
+
 
  project "Crypt"
 	location "Crypt"
