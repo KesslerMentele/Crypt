@@ -7,6 +7,18 @@
     <Filter Include="Crypt\Events">
       <UniqueIdentifier>{BB165744-A779-E6E8-50FF-1E9F3C41B26B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Crypt\ImGui">
+      <UniqueIdentifier>{21616C5F-8D16-E554-160B-DF2B82BFDB58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\OpenGL">
+      <UniqueIdentifier>{1E7D2C1D-8A08-9AE1-9319-1DD6FF23F6E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Crypt.h" />
@@ -31,18 +43,56 @@
     <ClInclude Include="src\Crypt\Events\MouseEvent.h">
       <Filter>Crypt\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Crypt\ImGui\ImGuiLayer.h">
+      <Filter>Crypt\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crypt\Layer.h">
+      <Filter>Crypt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crypt\LayerStack.h">
+      <Filter>Crypt</Filter>
+    </ClInclude>
     <ClInclude Include="src\Crypt\Log.h">
       <Filter>Crypt</Filter>
     </ClInclude>
+    <ClInclude Include="src\Crypt\Window.h">
+      <Filter>Crypt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\crypch.h" />
+    <ClInclude Include="src\Crypt\Input.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
+    <ClInclude Include="src\Crypt\KeyCodes.h" />
+    <ClInclude Include="src\Crypt\MouseButtonCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Crypt\Application.cpp">
       <Filter>Crypt</Filter>
     </ClCompile>
+    <ClCompile Include="src\Crypt\ImGui\ImGuiLayer.cpp">
+      <Filter>Crypt\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crypt\Layer.cpp">
+      <Filter>Crypt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crypt\LayerStack.cpp">
+      <Filter>Crypt</Filter>
+    </ClCompile>
     <ClCompile Include="src\Crypt\Log.cpp">
       <Filter>Crypt</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\crypch.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
   </ItemGroup>
 </Project>
