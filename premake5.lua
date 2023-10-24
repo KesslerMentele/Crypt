@@ -106,7 +106,8 @@ workspace "Crypt"
 	includedirs
 	{
 		"Crypt/vendor/spdlog/include",
-		"Crypt/src"
+		"Crypt/src",
+		"Crypt/vendor"
 	}
 
 	links

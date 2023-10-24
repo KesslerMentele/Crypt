@@ -4,3 +4,7 @@
 [submodule "Crypt/vendor/GLFW"]
 	path = Crypt/vendor/GLFW
 	url = https://github.com/TheCherno/GLFW
+[submodule "Crypt/vendor/imgui"]
+	path = Crypt/vendor/imgui
+	url = https://github.com/thecherno/imgui/
+	branch = docking

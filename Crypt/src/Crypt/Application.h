@@ -5,6 +5,8 @@
 #include "Crypt/LayerStack.h"
 #include "Crypt/Events/Event.h"
 
+#include "Crypt/ImGui/ImGuiLayer.h"
+
 #include "Window.h"
 
 namespace Crypt {
@@ -27,6 +29,7 @@ namespace Crypt {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 

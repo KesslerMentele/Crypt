@@ -1,5 +1,6 @@
 #include <Crypt.h>
 
+#include "imgui/imgui.h"
 
 class ExampleLayer : public Crypt::Layer 
 {
@@ -13,6 +14,13 @@ public:
 	{
 
 	}
+
+
+	virtual void OnImGuiRender() override 
+	{
+
+	}
+
 
 	void OnEvent(Crypt::Event& event) override
 	{
@@ -42,7 +50,6 @@ public:
 	Sandbox()
 	{
 		PushLayer(new ExampleLayer());
-		PushLayer(new Crypt::ImGuiLayer());
 	}
 
 	~Sandbox()
