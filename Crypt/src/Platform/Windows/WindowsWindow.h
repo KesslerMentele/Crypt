@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Crypt/Window.h"
+#include "Crypt/Renderer/GraphicsContext.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 
 namespace Crypt {
 	class WindowsWindow : public Window
@@ -29,6 +29,9 @@ namespace Crypt {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
+
+
 
 		struct WindowData
 		{

@@ -4,8 +4,7 @@
 #include "Crypt/Events/KeyEvent.h"
 #include "Crypt/Events/MouseEvent.h"
 #include "Crypt/Events/ApplicationEvent.h"
-
-#include <glad/glad.h>
+#include "Platform/OpenGL/OpenGLContext.h"
 
 
 namespace Crypt{
@@ -38,8 +37,11 @@ namespace Crypt{
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
+
 		CRY_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
+		
+		
 		if (!s_GLFWInitialized)
 		{
 			// TODO: glfwTerminate on system shutdow
@@ -49,12 +51,13 @@ namespace Crypt{
 			s_GLFWInitialized = true;
 		}
 		
-		if (s_GLFWInitialized)
-		{
+					
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-			glfwMakeContextCurrent(m_Window);
-			int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-			CRY_CORE_ASSERT(status, "Failed to initialize GLAD!");
+
+			m_Context = new OpenGLContext(m_Window);
+			m_Context->Init();
+			
+			
 			glfwSetWindowUserPointer(m_Window, &m_Data);
 			SetVSync(true);
 
@@ -148,11 +151,7 @@ namespace Crypt{
 
 				MouseMovedEvent event((float)xPos, (float)yPos);
 				data.EventCallback(event);
-			});
-
-			
-
-		}
+			});		
 		
 	}
 
@@ -164,7 +163,8 @@ namespace Crypt{
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
+
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

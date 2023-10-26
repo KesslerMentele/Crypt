@@ -24,9 +24,10 @@ workspace "Crypt"
 
  project "Crypt"
 	location "Crypt"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++17" 
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -59,7 +60,7 @@ workspace "Crypt"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
+		
 		systemversion "latest"
 
 		defines
@@ -77,23 +78,23 @@ workspace "Crypt"
 
 	filter "configurations:Debug"
 		defines "CRY_DEBUG"
-		staticruntime"off"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 	filter "configurations:Release"
 		defines "CRY_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 	filter "configurations:Dist"
 		defines "CRY_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
  project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
-	language "C++"
-	staticruntime "off"
+	language "C++"	
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -116,8 +117,7 @@ workspace "Crypt"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "off"
+
 		systemversion "latest"
 
 		defines
@@ -128,12 +128,13 @@ workspace "Crypt"
 	filter "configurations:Debug"
 		defines "CRY_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 	filter "configurations:Release"
 		defines "CRY_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 	filter "configurations:Dist"
 		defines "CRY_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
+

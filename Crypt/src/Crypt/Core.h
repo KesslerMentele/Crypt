@@ -1,11 +1,15 @@
 #pragma once
 
 #ifdef CRY_PLATFORM_WINDOWS
+#if CRY_DYNAMIC_LINK
 	#ifdef CRY_BUILD_DLL
 		#define CRYPT_API __declspec(dllexport)
 	#else 
 		#define CRYPT_API __declspec(dllimport)
 	#endif
+#else 
+	#define CRYPT_API
+#endif
 #else
 	#error Crypt only supports Windows!
 #endif

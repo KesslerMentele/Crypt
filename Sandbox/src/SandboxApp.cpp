@@ -1,7 +1,7 @@
 #include <Crypt.h>
 
 #include "imgui/imgui.h"
-
+ 
 class ExampleLayer : public Crypt::Layer 
 {
 public:
@@ -18,6 +18,10 @@ public:
 
 	virtual void OnImGuiRender() override 
 	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World!");
+		ImGui::End();
+
 
 	}
 
@@ -33,7 +37,7 @@ public:
 			CRY_TRACE("{0}", (char)e.GetKeyCode());
 		}
 	}
-
+	 
 
 
 };
