@@ -13,12 +13,14 @@ workspace "Crypt"
  IncludeDir["GLFW"] = "Crypt/vendor/GLFW/include"
  IncludeDir["Glad"] = "Crypt/vendor/Glad/include"
  IncludeDir["ImGui"] = "Crypt/vendor/imgui"
+ IncludeDir["glm"] = "Crypt/vendor/glm"
 
   startproject "Sandbox"
 
  include "Crypt/vendor/GLFW"
  include "Crypt/vendor/Glad"
  include "Crypt/vendor/imgui"
+
 
 
 
@@ -47,7 +49,8 @@ workspace "Crypt"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}/glm"
 	}
 
 	links

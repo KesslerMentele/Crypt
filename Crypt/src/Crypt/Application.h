@@ -1,13 +1,18 @@
 #pragma once
 
 #include "Core.h"
-#include "Crypt/Events/ApplicationEvent.h"
+
+#include "Window.h"
 #include "Crypt/LayerStack.h"
 #include "Crypt/Events/Event.h"
+#include "Crypt/Events/ApplicationEvent.h"
 
 #include "Crypt/ImGui/ImGuiLayer.h"
 
-#include "Window.h"
+#include "Crypt/Renderer/Shader.h"
+#include "Crypt/Renderer/Buffer.h"
+#include "Crypt/Renderer/VertexArray.h"
+
 
 namespace Crypt {
 	class CRYPT_API Application
@@ -33,9 +38,14 @@ namespace Crypt {
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
-		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::shared_ptr<Shader> m_Shader;
+		std::shared_ptr<VertexArray> m_VertexArray;
+		
+		std::shared_ptr<Shader> m_BlueShader;
+		std::shared_ptr<VertexArray> m_SquareVA;
 
 	private:
+
 		static Application* s_Instance;
 
 	};	

@@ -17,6 +17,12 @@ namespace Crypt{
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		CRY_CORE_ASSERT(status, "Failed to initialize GLAD!");
+
+		CRY_CORE_INFO("OpenGL Info: ");
+		CRY_CORE_INFO("  Vendor: {0}", (const char*)glGetString(GL_VENDOR));
+		CRY_CORE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
+		CRY_CORE_INFO("  Version: {0}", (const char*)glGetString(GL_VERSION));
+
 	}
 
 	void OpenGLContext::SwapBuffers()
