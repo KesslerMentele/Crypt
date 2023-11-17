@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Crypt/Window.h"
+#include "Crypt/Core/Window.h"
 #include "Crypt/Renderer/GraphicsContext.h"
 
 #include <glad/glad.h>
@@ -29,7 +29,7 @@ namespace Crypt {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
+		Scope<GraphicsContext> m_Context;
 
 
 

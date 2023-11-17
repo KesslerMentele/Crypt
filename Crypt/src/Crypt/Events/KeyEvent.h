@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Event.h"
+#include "Crypt/Events/Event.h"
 
 namespace Crypt {
-	class CRYPT_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int GetKeyCode() const { return m_KeyCode;  }
@@ -16,7 +16,7 @@ namespace Crypt {
 		int m_KeyCode;
 	};
 
-	class CRYPT_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public: 
 		KeyPressedEvent(int keycode, int repeatCount)
@@ -36,7 +36,7 @@ namespace Crypt {
 		int m_RepeatCount;
 	};
 
-	class CRYPT_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keycode)
@@ -52,7 +52,7 @@ namespace Crypt {
 		EVENT_CLASS_TYPE(KeyTyped)
 	};
 
-	class CRYPT_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode)

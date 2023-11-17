@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Crypt/Core.h"
+#include "Crypt/Core/Core.h"
 
 namespace Crypt {
-	class CRYPT_API Input
+	class Input
 	{
 	public: 
 		inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
@@ -22,6 +22,6 @@ namespace Crypt {
 
 
 	private:
-		static Input* s_Instance;
+		static Scope<Input> s_Instance;
 	};
 }

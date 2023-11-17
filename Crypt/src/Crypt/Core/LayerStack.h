@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Crypt/Core.h"
-#include "Layer.h"
+#include "Crypt/Core/Core.h"
+#include "Crypt/Core/Layer.h"
 
 namespace Crypt {
 	
-	class CRYPT_API LayerStack 
+	class LayerStack 
 	{
 	public:
-		LayerStack();
+		LayerStack() = default;
 		~LayerStack();
 
 		void PushLayer(Layer* layer);

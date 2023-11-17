@@ -1,5 +1,5 @@
 #pragma once
-#include "Crypt/Input.h"
+#include "Crypt/Core/Input.h"
 
 namespace Crypt {
 	class WindowsInput : public Input

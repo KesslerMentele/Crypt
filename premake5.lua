@@ -1,5 +1,6 @@
 workspace "Crypt"
  architecture ("x64")
+ startproject "Sandbox"
 
  configurations
  {
@@ -14,13 +15,13 @@ workspace "Crypt"
  IncludeDir["Glad"] = "Crypt/vendor/Glad/include"
  IncludeDir["ImGui"] = "Crypt/vendor/imgui"
  IncludeDir["glm"] = "Crypt/vendor/glm"
+ IncludeDir["stb_image"] = "Crypt/vendor/stb_image"
 
-  startproject "Sandbox"
-
- include "Crypt/vendor/GLFW"
- include "Crypt/vendor/Glad"
- include "Crypt/vendor/imgui"
-
+ group "Dependencies"
+  include "Crypt/vendor/GLFW"
+  include "Crypt/vendor/Glad"
+  include "Crypt/vendor/imgui"
+ group ""
 
 
 
@@ -40,7 +41,16 @@ workspace "Crypt"
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
+	}
+
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	includedirs
@@ -50,7 +60,8 @@ workspace "Crypt"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}/glm"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links
@@ -68,7 +79,6 @@ workspace "Crypt"
 
 		defines
 		{
-			"CRY_PLATFORM_WINDOWS",
 			"CRY_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
@@ -111,7 +121,9 @@ workspace "Crypt"
 	{
 		"Crypt/vendor/spdlog/include",
 		"Crypt/src",
-		"Crypt/vendor"
+		"Crypt/vendor",
+		"Crypt/vendor/glm"
+
 	}
 
 	links
@@ -123,10 +135,6 @@ workspace "Crypt"
 
 		systemversion "latest"
 
-		defines
-		{
-			"CRY_PLATFORM_WINDOWS"
-		}
 
 	filter "configurations:Debug"
 		defines "CRY_DEBUG"

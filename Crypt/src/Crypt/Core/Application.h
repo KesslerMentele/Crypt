@@ -1,21 +1,18 @@
 #pragma once
 
-#include "Core.h"
+#include "Crypt/Core/Core.h"
 
-#include "Window.h"
-#include "Crypt/LayerStack.h"
+#include "Crypt/Core/Window.h"
+#include "Crypt/Core/LayerStack.h"
 #include "Crypt/Events/Event.h"
 #include "Crypt/Events/ApplicationEvent.h"
 
 #include "Crypt/ImGui/ImGuiLayer.h"
 
-#include "Crypt/Renderer/Shader.h"
-#include "Crypt/Renderer/Buffer.h"
-#include "Crypt/Renderer/VertexArray.h"
-
+#include "Crypt/Core/Timestep.h"
 
 namespace Crypt {
-	class CRYPT_API Application
+	class Application
 	{
 	public:
 		Application();
@@ -28,21 +25,21 @@ namespace Crypt {
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
+		void MoveCamera(KeyPressedEvent& e);
+
 		inline static Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 
+	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
+		bool m_Minimized = false;
 		LayerStack m_LayerStack;
-
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_VertexArray;
-		
-		std::shared_ptr<Shader> m_BlueShader;
-		std::shared_ptr<VertexArray> m_SquareVA;
+		float m_LastFrameTime = 0.0f;
 
 	private:
 

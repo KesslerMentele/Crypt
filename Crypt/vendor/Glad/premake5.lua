@@ -36,7 +36,7 @@ project "Glad"
 
 	filter "system:windows"
 		systemversion "latest"
-		staticruntime "off"
+		staticruntime "on"
 
 		
 

@@ -1,13 +1,12 @@
 #include "crypch.h"
-#include "ImGuiLayer.h"
+#include "Crypt/ImGui/ImGuiLayer.h"
 
-#include "imgui.h"
+#include <imgui.h>
 
-//#define IMGUI_IMPL_API
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
-#include "Crypt/Application.h"
+#include "Crypt/Core/Application.h"
 
 // Temporary
 #include <GLFW/glfw3.h>

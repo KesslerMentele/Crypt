@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Crypt/Core.h"
-#include "Events/Event.h"
+#include "Crypt/Core/Core.h"
+#include "Crypt/Core/Timestep.h"
+#include "Crypt/Events/Event.h"
 
 namespace Crypt {
 
-	class CRYPT_API Layer
+	class Layer
 	{
 	public:
 		Layer(const std::string& name = "Layer");
@@ -13,7 +14,7 @@ namespace Crypt {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

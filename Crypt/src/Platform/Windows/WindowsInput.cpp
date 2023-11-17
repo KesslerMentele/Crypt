@@ -1,12 +1,12 @@
 #include "crypch.h"
-#include "WindowsInput.h"
+#include "Platform/Windows/WindowsInput.h"
 
-#include "Crypt/Application.h"
+#include "Crypt/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace Crypt {
 
-	Input* Input::s_Instance = new WindowsInput();
+	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
 
 	bool WindowsInput::IsKeyPressedImpl(int keycode)
 	{

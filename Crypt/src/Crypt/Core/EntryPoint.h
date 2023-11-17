@@ -1,4 +1,6 @@
 #pragma once
+#include "Crypt/Core/Core.h"
+
 
 #ifdef CRY_PLATFORM_WINDOWS
 

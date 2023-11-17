@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Crypt/Layer.h"
+#include "Crypt/Core/Layer.h"
 
 #include "Crypt/Events/ApplicationEvent.h"
 #include "Crypt/Events/KeyEvent.h"
 #include "Crypt/Events/MouseEvent.h"
 
 namespace Crypt {
-	class CRYPT_API ImGuiLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();

@@ -2,7 +2,7 @@
 
 #include "crypch.h"
 
-#include "Crypt/Core.h"
+#include "Crypt/Core/Core.h"
 #include "Crypt/Events/Event.h"
 
 namespace Crypt {
@@ -21,7 +21,7 @@ namespace Crypt {
 	};
 
 	// Interface representing a desktop window
-	class CRYPT_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
@@ -40,7 +40,7 @@ namespace Crypt {
 
 		virtual void* GetNativeWindow() const = 0;
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 
 	
