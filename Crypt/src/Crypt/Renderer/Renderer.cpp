@@ -8,12 +8,15 @@ namespace Crypt {
 
 	void Renderer::Init()
 	{
+		CRY_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer2D::Init();
 	}
 
 	void Renderer::Shutdown()
 	{
+
 		Renderer2D::Shutdown();
 	}
 

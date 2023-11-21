@@ -17,6 +17,8 @@ namespace Crypt {
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		CRY_PROFILE_FUNCTION();
+
 		float time = ts;
 
 		if (Input::IsKeyPressed(CRY_KEY_R))
@@ -74,6 +76,8 @@ namespace Crypt {
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		CRY_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(CRY_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(CRY_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -81,6 +85,8 @@ namespace Crypt {
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		CRY_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -89,6 +95,8 @@ namespace Crypt {
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		CRY_PROFILE_FUNCTION();
+
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;

@@ -9,6 +9,7 @@ namespace Crypt {
 	
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
 	{
+
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None: CRY_CORE_ASSERT(false,"RendererAPI::None is currently not supported!") return nullptr;
