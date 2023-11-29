@@ -1,14 +1,13 @@
 #pragma once
-#include "Crypt.h"
 
 #include "Player.h"
 
 struct Pillar
 {
-	glm::vec3 TopPosition = { 0.0f,  10.0f, 0.0f };
+	glm::vec3 TopPosition = { 0.0f, 10.0f, 0.0f };
 	glm::vec2 TopScale = { 15.0f, 20.0f };
 
-	glm::vec3 BottomPosition = { 10.0f,  10.0f, 0.0f };
+	glm::vec3 BottomPosition = { 10.0f, 10.0f, 0.0f};
 	glm::vec2 BottomScale = { 15.0f, 20.0f };
 };
 
@@ -19,9 +18,9 @@ public:
 
 	void OnUpdate(Crypt::Timestep ts);
 	void OnRender();
-	
-	void OnImGuiRender();
 
+	void OnImGuiRender();
+	
 	bool IsGameOver() const { return m_GameOver; }
 	void Reset();
 
@@ -33,6 +32,7 @@ private:
 	void GameOver();
 private:
 	Player m_Player;
+
 	bool m_GameOver = false;
 
 	float m_PillarTarget = 30.0f;
@@ -43,4 +43,3 @@ private:
 
 	Crypt::Ref<Crypt::Texture2D> m_TriangleTexture;
 };
-

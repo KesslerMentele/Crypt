@@ -7,11 +7,12 @@
 
 class GameLayer : public Crypt::Layer
 {
+public:
 	GameLayer();
 	virtual ~GameLayer() = default;
 
-	void OnAttach() override;
-	void OnDetach() override;
+	virtual void OnAttach() override;
+	virtual void OnDetach() override;
 
 	void OnUpdate(Crypt::Timestep ts) override;
 	virtual void OnImGuiRender() override;
@@ -27,7 +28,6 @@ private:
 	float m_Time = 0.0f;
 	bool m_Blink = false;
 
-
 	enum class GameState
 	{
 		Play = 0, MainMenu = 1, GameOver = 2
@@ -35,4 +35,3 @@ private:
 
 	GameState m_State = GameState::MainMenu;
 };
-
