@@ -405,3 +405,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Sandbox/CryptProfile-Shutdown.json
+/Sandbox/CryptProfile-Startup.json
+/Sandbox/imgui.ini
+/Sandbox/CryptProfile-Runtime.json
