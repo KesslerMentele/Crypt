@@ -11,6 +11,8 @@
 
 #include "Crypt/Core/Timestep.h"
 
+int main(int argc, char** argv);
+
 namespace Crypt {
 	class Application
 	{
@@ -18,18 +20,21 @@ namespace Crypt {
 		Application();
 		virtual ~Application();
 
-		void Run();
 
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
-		void MoveCamera(KeyPressedEvent& e);
+		Window& GetWindow() { return *m_Window; }
+
+		//void MoveCamera(KeyPressedEvent& e); - Unnecessary?
+
+		void Close();
 
 		inline static Application& Get() { return *s_Instance; }
-		inline Window& GetWindow() { return *m_Window; }
 	private:
+		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
@@ -44,6 +49,7 @@ namespace Crypt {
 	private:
 
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 
 	};	
 

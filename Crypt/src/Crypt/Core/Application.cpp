@@ -96,6 +96,11 @@ namespace Crypt {
 	}
 
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 	void Application::Run()
 	{
 		CRY_PROFILE_FUNCTION();
