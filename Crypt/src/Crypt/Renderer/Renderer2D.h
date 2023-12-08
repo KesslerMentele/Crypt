@@ -3,6 +3,7 @@
 #include "Crypt/Renderer/OrthographicCamera.h"
 
 #include "Crypt/Renderer/Texture.h"
+#include "SubTexture2D.h"
 
 namespace Crypt {
 
@@ -21,23 +22,27 @@ namespace Crypt {
 
 		// Draw flat color non-rotated
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
-		static void DrawQuad(const glm::vec3& position,const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 
 		// Draw texture non-rotated
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, 
-			float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, 
-			float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+
+		// Draw texture region non-rotated
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 
 		// Draw flat color rotated
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const glm::vec4& color);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const glm::vec4& color);
+		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const glm::vec4& color);
+		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const glm::vec4& color);
 
 		// Draw texture rotated
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const Ref<Texture2D>& texture,
-			float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const Ref<Texture2D>& texture,
-			float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const Ref<Texture2D>& texture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const Ref<Texture2D>& texture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+
+		// Draw texture region rotated
+		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
+		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 
 
 		// Stats
