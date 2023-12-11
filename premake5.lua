@@ -102,6 +102,53 @@ workspace "Crypt"
 		runtime "Release"
 		optimize "on"
 
+project "Crypt-ID"
+	location "Crypt-ID"
+	kind "ConsoleApp"
+	language "C++"	
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	files 
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"Crypt/vendor/spdlog/include",
+		"Crypt/src",
+		"Crypt/vendor",
+		"Crypt/vendor/glm"
+
+	}
+
+	links
+	{
+		"Crypt"
+	}
+
+	filter "system:windows"
+
+		systemversion "latest"
+
+
+	filter "configurations:Debug"
+		defines "CRY_DEBUG"
+		runtime "Debug"
+		symbols "on"
+	filter "configurations:Release"
+		defines "CRY_RELEASE"
+		runtime "Release"
+		optimize "on"
+	filter "configurations:Dist"
+		defines "CRY_DIST"
+		runtime "Release"
+		optimize "on"
+		
  project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"

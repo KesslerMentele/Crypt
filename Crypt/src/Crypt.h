@@ -23,6 +23,7 @@
 
 #include "Crypt/Renderer/Buffer.h"
 #include "Crypt/Renderer/Shader.h"
+#include "Crypt/Renderer/Framebuffer.h"
 #include "Crypt/Renderer/Texture.h"
 #include "Crypt/Renderer/SubTexture2D.h"
 #include "Crypt/Renderer/VertexArray.h"

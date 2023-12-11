@@ -13,7 +13,7 @@ namespace Crypt {
 
 	Application* Application::s_Instance = nullptr;
 		
-	Application::Application()
+	Application::Application(const std::string& name)
 	{
 		CRY_PROFILE_FUNCTION();
 
@@ -21,7 +21,7 @@ namespace Crypt {
 		CRY_CORE_ASSERT(!s_Instance, "Application already exists!")
 		s_Instance = this;
 		
-		m_Window = Window::Create();
+		m_Window = Window::Create(WindowProps(name));
 		m_Window->SetEventCallback(CRY_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();

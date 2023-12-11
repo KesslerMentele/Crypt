@@ -20,6 +20,7 @@ private:
 	// ---Temporary---
 	Crypt::Ref<Crypt::VertexArray> m_SquareVA;
 	Crypt::Ref<Crypt::Shader> m_FlatColorShader;
+	Crypt::Ref<Crypt::Framebuffer> m_Framebuffer;
 
 	Crypt::Ref<Crypt::Texture2D> m_CheckerboardTexture;
 	Crypt::Ref<Crypt::Texture2D> m_SpriteSheet;	

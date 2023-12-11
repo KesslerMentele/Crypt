@@ -17,7 +17,7 @@ namespace Crypt {
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Crypt App");
 		virtual ~Application();
 
 
