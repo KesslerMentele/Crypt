@@ -165,11 +165,6 @@ namespace Crypt {
 	void CryptIDLayer::OnImGuiRender()
 	{
 		CRY_PROFILE_FUNCTION();
-
-		static bool dockingEnabled = true;
-
-		if (dockingEnabled)
-		{
 			static bool dockspaceOpen = true;
 			static bool opt_fullscreen_persistant = true;
 			bool opt_fullscreen = opt_fullscreen_persistant;
@@ -187,7 +182,7 @@ namespace Crypt {
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 				window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiTabBarFlags_NoTooltip;
 			}
 
 			// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
@@ -228,8 +223,6 @@ namespace Crypt {
 
 				ImGui::EndMenuBar();
 			}
-			ImGui::End();
-		}
 		ImGui::Begin("Settings");
 
 		auto stats = Renderer2D::GetStats();
@@ -242,22 +235,26 @@ namespace Crypt {
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::Checkbox("Rotation", &m_Rotate);
 		m_CameraController.SetRotation(m_Rotate);
-		ImGui::End();
+
+			ImGui::End();
 
 
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
 		{
+			m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+			m_ViewportSize = { viewportPanelSize.x,viewportPanelSize.y };
 
+			m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
 		}
-		m_ViewportSize = { viewportPanelSize.x,viewportPanelSize.y };
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, viewportPanelSize, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{ 0,1 }, ImVec2{ 1,0 });
 		ImGui::End();
-
+		ImGui::PopStyleVar();
+		ImGui::End();
 
 
 	}

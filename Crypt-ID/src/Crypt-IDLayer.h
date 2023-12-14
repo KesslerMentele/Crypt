@@ -28,7 +28,7 @@ namespace Crypt
 		Ref<Texture2D> m_SpriteSheet;
 		Ref<SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree, m_TextureAllGrass;
 
-		glm::vec2 m_ViewportSize;
+		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
 
 		// ---------------
 

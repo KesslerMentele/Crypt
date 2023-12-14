@@ -69,6 +69,11 @@ namespace Crypt {
 		ImGui::DestroyContext();
 	}
 
+	void ImGuiLayer::OnEvent(Event& e)
+	{
+		
+	}
+
 	void ImGuiLayer::Begin()
 	{
 		CRY_PROFILE_FUNCTION();

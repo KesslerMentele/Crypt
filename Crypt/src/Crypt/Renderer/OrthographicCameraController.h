@@ -28,6 +28,8 @@ public:
 	void OnUpdate(Timestep ts);
 	void OnEvent(Event& e);
 
+	void OnResize(float width, float height);
+
 	void SetRotation(bool rotate) { m_Rotation = rotate; }
 
 	OrthographicCamera& GetCamera() { return m_Camera; }
