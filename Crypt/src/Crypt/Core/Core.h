@@ -3,12 +3,6 @@
 #include <memory>
 
 
-
-//#ifdef CRY_PLATFORM_WINDOWS
-//#if CRY_DYNAMIC_LINK
-//	#ifdef CRY_BUILD_DLL
-//		#define CRYPT_API __declspec(dllexport)
-
 #ifdef _WIN32
 	#ifdef _WIN64
 		#define CRY_PLATFORM_WINDOWS
@@ -38,28 +32,25 @@
 	#error "Unknown platform!"
 #endif
 
-//// DLL support
-//#ifdef CRY_PLATFORM_WINDOWS
-//	#if CRY_DYNAMIC_LINK
-//		#ifdef HZ_BUILD_DLL
-//			#define CRYPT_API __declspec(dllexport)
-//		#else
-//			#define CRYPT_API __declspec(dllimport)
-//		#endif
-//	#else
-//		#define CRYPT_API
-//	#endif
-//#else
-//	#error "Crypt only supports Windows!"
-//#endif // End of DLL support
 
 #ifdef CRY_DEBUG
+	#if defined(CRY_PLATFORM_WINDOWS)
+		#define CRY_DEBUGBREAK() __debugbreak()
+	#elif defined(CRY_PLATFORM_LINUX)
+		#include <signal.h>
+		#define CRY_DEBUGBREAK() raise(SIGTRAP)
+	#else 
+		#error "Platform Doesn't support debugbreak yet!"
+	#endif
 	#define CRY_ENABLE_ASSERTS
+#else
+	#define CRY_DEBUGBREAK() 
 #endif
 
+
 #ifdef CRY_ENABLE_ASSERTS
-	#define CRY_ASSERT(x,...) {if(!(x)) { CRY_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#define CRY_CORE_ASSERT(x,...) {if(!(x)) { CRY_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define CRY_ASSERT(x,...) {if(!(x)) { CRY_ERROR("Assertion Failed: {0}", __VA_ARGS__); CRY_DEBUGBREAK(); } }
+	#define CRY_CORE_ASSERT(x,...) {if(!(x)) { CRY_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__);  CRY_DEBUGBREAK(); } }
 #else 
 	#define CRY_ASSERT(x,...) 
 	#define CRY_CORE_ASSERT(x,...)
@@ -67,7 +58,7 @@
 
 #define BIT(x) (1 << x)
 
-#define CRY_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define CRY_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...);}
 
 
 namespace Crypt {

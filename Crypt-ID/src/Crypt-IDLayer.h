@@ -19,6 +19,8 @@ namespace Crypt
 		virtual void OnImGuiRender() override;
 		void OnEvent(Event& event) override;
 	private:
+		OrthographicCameraController m_CameraController;
+		
 		// ---Temporary---
 		Ref<VertexArray> m_SquareVA;
 		Ref<Shader> m_FlatColorShader;
@@ -31,10 +33,17 @@ namespace Crypt
 		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
 
 		// ---------------
+		
+		Ref<Scene> m_ActiveScene;
+		Entity m_BarrelEntity;
+		Entity m_SecondCamera;
+		Entity m_CameraEntity;
 
-		OrthographicCameraController m_CameraController;
+		bool m_PrimaryCamera = false;
 
 		bool m_Rotate = false;
+		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
 
 		glm::vec4 m_SquareColor = { 0.2f,0.3f, 0.8f, 1.0f };
 

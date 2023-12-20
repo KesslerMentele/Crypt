@@ -115,6 +115,22 @@ namespace Crypt {
 		CRY_PROFILE_FUNCTION();
 	}
 
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
+	{
+		CRY_PROFILE_FUNCTION();
+
+		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+
+	}
+
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		CRY_PROFILE_FUNCTION();
@@ -209,36 +225,9 @@ namespace Crypt {
 	{
 		CRY_PROFILE_FUNCTION();
 
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-		{
-			FlushAndReset();
-		}
-
-		constexpr size_t quadVertexCount = 4;
-		const float textureIndex = 0.0f; // White Texture
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		const float tilingfactor = 1.0f;
-
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
-		}
-
-		s_Data.QuadIndexCount += 6;
-		s_Data.Stats.QuadCount++;
+		DrawQuad(transform, color);
 	}
 
 	// Draw Textured Quads
@@ -246,51 +235,10 @@ namespace Crypt {
 	{
 		CRY_PROFILE_FUNCTION();
 
-		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
-
-
-		float textureIndex = 0.0f;
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		if (textureIndex == 0.0f)
-		{
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
-		}
-
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = tintcolor;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
-		}
-
-		s_Data.QuadIndexCount += 6;
-		s_Data.Stats.QuadCount++;
+		DrawQuad(transform, texture, tilingfactor, tintcolor);
 	}
 
 	// Draw Texture Region Quads
@@ -327,6 +275,85 @@ namespace Crypt {
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
+			s_Data.QuadVertexBufferPtr->Position = pos;
+			s_Data.QuadVertexBufferPtr->Color = tintcolor;
+			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
+			s_Data.QuadVertexBufferPtr++;
+			};
+
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
+		}
+
+		s_Data.QuadIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+	}
+
+	// Draw solid from transform
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	{
+		CRY_PROFILE_FUNCTION();
+
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
+
+		constexpr size_t quadVertexCount = 4;
+		const float textureIndex = 0.0f; // White Texture
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		const float tilingfactor = 1.0f;
+
+		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
+			s_Data.QuadVertexBufferPtr->Position = pos;
+			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
+			s_Data.QuadVertexBufferPtr++;
+			};
+
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
+		}
+
+		s_Data.QuadIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+	}
+
+	// Draw textured from transform
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
+	{
+		CRY_PROFILE_FUNCTION();
+
+		constexpr size_t quadVertexCount = 4;
+		constexpr glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
+
+
+		float textureIndex = 0.0f;
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+		{
+			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
 
 		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
 			s_Data.QuadVertexBufferPtr->Position = pos;

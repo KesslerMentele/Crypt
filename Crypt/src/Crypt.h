@@ -11,10 +11,15 @@
 
 #include "Crypt/Core/Input.h"
 #include "Crypt/Core/KeyCodes.h"
-#include "Crypt/Core/MouseButtonCodes.h"
+#include "Crypt/Core/MouseCodes.h"
 #include "Crypt/Renderer/OrthographicCameraController.h"
 
 #include "Crypt/ImGui/ImGuiLayer.h"
+
+#include "Crypt/Scene/Scene.h"
+#include "Crypt/Scene/Entity.h"
+#include "Crypt/Scene/Components.h"
+
 
 // ----Renderer---------------------------------
 #include "Crypt/Renderer/Renderer.h"

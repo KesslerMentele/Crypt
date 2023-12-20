@@ -15,6 +15,7 @@ workspace "Crypt"
  IncludeDir["Glad"] = "Crypt/vendor/Glad/include"
  IncludeDir["ImGui"] = "Crypt/vendor/imgui"
  IncludeDir["glm"] = "Crypt/vendor/glm"
+ IncludeDir["entt"] = "Crypt/vendor/entt/include"
  IncludeDir["stb_image"] = "Crypt/vendor/stb_image"
 
  group "Dependencies"
@@ -61,7 +62,8 @@ workspace "Crypt"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -122,8 +124,8 @@ project "Crypt-ID"
 		"Crypt/vendor/spdlog/include",
 		"Crypt/src",
 		"Crypt/vendor",
-		"Crypt/vendor/glm"
-
+		"Crypt/vendor/glm",
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -169,8 +171,8 @@ project "Crypt-ID"
 		"Crypt/vendor/spdlog/include",
 		"Crypt/src",
 		"Crypt/vendor",
-		"Crypt/vendor/glm"
-
+		"Crypt/vendor/glm",
+		"%{IncludeDir.entt}"
 	}
 
 	links
