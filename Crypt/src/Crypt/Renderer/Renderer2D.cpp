@@ -100,6 +100,7 @@ namespace Crypt {
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
+		// set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
 
@@ -260,7 +261,7 @@ namespace Crypt {
 		float textureIndex = 0.0f;
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			if (*s_Data.TextureSlots[i] == *texture)
 			{
 				textureIndex = (float)i;
 				break;

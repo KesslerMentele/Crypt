@@ -1,6 +1,8 @@
 #pragma once
-#include "crypch.h"
 
+#include <functional>
+
+#include "Crypt/Debug/Instrumentor.h"
 #include "Crypt/Core/Core.h"
 
 namespace Crypt

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "crypch.h"
+#include <sstream>
 
 #include "Crypt/Core/Core.h"
 #include "Crypt/Events/Event.h"

@@ -20,42 +20,6 @@ namespace Crypt {
 		"WWWWDGGGGGGDDGGGGGGDDWWW"
 		"WWWWWDDDDDDDDDDDDDDWWWWW"
 		"WWWWWWWWWWWWWWWWWWWWWWWW";
-	class Timer
-	{
-	public:
-		Timer(const char* name)
-			: m_Name(name), m_Stopped(false)
-		{
-			m_StartTimepoint = std::chrono::high_resolution_clock::now();
-		}
-
-		~Timer()
-		{
-			if (!m_Stopped)
-				Stop();
-		}
-
-		void Stop()
-		{
-			auto endTimepoint = std::chrono::high_resolution_clock::now();
-
-			long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-
-			m_Stopped = true;
-
-			float duration = (end - start) * 0.001f;
-
-			float fps = 1000 / duration;
-
-			std::cout << m_Name << ": " << duration << "ms (" << fps << ") Frames per second." << std::endl;
-		}
-
-	private:
-		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-		bool m_Stopped;
-	};
 
 	CryptIDLayer::CryptIDLayer()
 		:Layer("CryptIDLayer"), m_CameraController(1280.0f / 720.0f)
@@ -63,6 +27,8 @@ namespace Crypt {
 	}
 	void CryptIDLayer::OnAttach()
 	{
+		CRY_PROFILE_FUNCTION();
+
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
 		m_SpriteSheet = Texture2D::Create("assets/game/textures/RPGpack_sheet_2X.png");
@@ -119,18 +85,20 @@ namespace Crypt {
 				auto& transform = GetComponent<TransformComponent>().Transform;
 				float speed = 5.0f;
 
-				if (Input::IsKeyPressed(KeyCode::A))
+				if (Input::IsKeyPressed(Key::A))
 					transform[3][0] -= speed * ts;
-				if (Input::IsKeyPressed(KeyCode::D))
+				if (Input::IsKeyPressed(Key::D))
 					transform[3][0] += speed * ts;
-				if (Input::IsKeyPressed(KeyCode::W))
+				if (Input::IsKeyPressed(Key::W))
 					transform[3][1] += speed * ts;
-				if (Input::IsKeyPressed(KeyCode::S))
+				if (Input::IsKeyPressed(Key::S))
 					transform[3][1] -= speed * ts;
 			}
 		};
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void CryptIDLayer::OnDetach()
@@ -255,6 +223,9 @@ namespace Crypt {
 
 			ImGui::EndMenuBar();
 		}
+
+		m_SceneHierarchyPanel.OnImGuiRender();
+
 		ImGui::Begin("Settings");
 
 		auto stats = Renderer2D::GetStats();
@@ -311,8 +282,8 @@ namespace Crypt {
 			m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
 		}*/
 
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
 		ImGui::End();
 		ImGui::PopStyleVar();
 		ImGui::End();

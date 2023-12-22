@@ -20,31 +20,31 @@ namespace Crypt {
 
 		float time = ts;
 
-		if (Input::IsKeyPressed(CRY_KEY_R))
+		if (Input::IsKeyPressed(Key::R))
 		{
 			m_CameraPosition = glm::vec3(0.0f);
 			m_CameraRotation = 0.0f;
 			m_Camera.SetRotation(m_CameraRotation);
 		}
 
-		if (Input::IsKeyPressed(CRY_KEY_W))
+		if (Input::IsKeyPressed(Key::W))
 		{
 			m_CameraPosition.x += -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 			m_CameraPosition.y += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
-		if (Input::IsKeyPressed(CRY_KEY_S))
+		if (Input::IsKeyPressed(Key::S))
 		{
 			m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 			m_CameraPosition.y -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 
-		if (Input::IsKeyPressed(CRY_KEY_A))
+		if (Input::IsKeyPressed(Key::A))
 		{
 			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 			m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 		}
 
-		if (Input::IsKeyPressed(CRY_KEY_D))
+		if (Input::IsKeyPressed(Key::D))
 		{
 			m_CameraPosition.x += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
 			m_CameraPosition.y += sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
@@ -52,11 +52,11 @@ namespace Crypt {
 
 		if (m_Rotation)
 		{
-			if (Input::IsKeyPressed(CRY_KEY_Q))
+			if (Input::IsKeyPressed(Key::Q))
 				m_CameraRotation += m_CameraRotationSpeed * time;
 
 			
-			if (Input::IsKeyPressed(CRY_KEY_E))
+			if (Input::IsKeyPressed(Key::E))
 				m_CameraRotation -= m_CameraRotationSpeed * time;
 
 			if (m_CameraRotation > 180.0f)

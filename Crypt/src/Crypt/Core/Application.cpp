@@ -1,5 +1,7 @@
 #include "crypch.h"
-#include "Application.h"
+#include "Crypt/Core/Application.h"
+
+#include "Crypt/Core/Log.h"
 
 #include "Crypt/Renderer/Renderer.h"
 
