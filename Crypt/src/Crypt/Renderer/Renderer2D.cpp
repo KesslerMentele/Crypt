@@ -92,7 +92,7 @@ namespace Crypt {
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		int32_t samplers[32];
+		int32_t samplers[s_Data.MaxTextureSlots];
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
@@ -113,6 +113,8 @@ namespace Crypt {
 	void Renderer2D::Shutdown()
 	{
 		CRY_PROFILE_FUNCTION();
+
+		delete[] s_Data.QuadVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
@@ -177,48 +179,11 @@ namespace Crypt {
 		s_Data.TextureSlotIndex = 1;
 	}
 
-	// Helper Methods -----------------------------------------------------------------------------
-
 	// Calls Draw Solid Quads
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		DrawQuad({ position.x, position.y, 0.0f }, size, color);
 	}
-
-	// Calls Draw Textured Quads
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
-	{		
-		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingfactor, tintcolor);
-	}
-
-	// Calls Draw Texture Region Quads
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
-	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, subtexture, tilingfactor, tintcolor);
-	}
-
-	// Calls Draw Rotated Solid Quads
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleRadians, const glm::vec4& color)
-	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angleRadians, color);
-	}
-
-	// Calls Draw Rotated Textured Quads
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleRadians, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
-	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angleRadians, texture, tilingfactor, tintcolor);
-
-	}
-	
-	// Calls Draw Rotated Texture Region Quads
-	void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleRadians, const Ref<SubTexture2D>& subtexture, float tilingfactor , glm::vec4& tintcolor)
-	{
-		DrawRotatedQuad(glm::vec3(position.x, position.y, 0.0f), size, angleRadians, subtexture, tilingfactor, tintcolor);
-	}
-	// --------------------------------------------------------------------------------------------
-
-
-
 
 	// Draw Solid Quads
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
@@ -230,6 +195,13 @@ namespace Crypt {
 		DrawQuad(transform, color);
 	}
 
+
+	// Calls Draw Textured Quads
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
+	{		
+		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingfactor, tintcolor);
+	}
+
 	// Draw Textured Quads
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
 	{
@@ -239,59 +211,6 @@ namespace Crypt {
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		DrawQuad(transform, texture, tilingfactor, tintcolor);
-	}
-
-	// Draw Texture Region Quads
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
-	{
-		CRY_PROFILE_FUNCTION();
-
-		constexpr size_t quadVertexCount = 4;
-		constexpr glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
-		const glm::vec2* textureCoords = subtexture->GetTexCoords();
-		const Ref<Texture2D> texture = subtexture->GetTexture();
-
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
-
-
-		float textureIndex = 0.0f;
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-		{
-			if (*s_Data.TextureSlots[i].get() == *texture)
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		if (textureIndex == 0.0f)
-		{
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
-		}
-
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = tintcolor;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
-		}
-
-		s_Data.QuadIndexCount += 6;
-		s_Data.Stats.QuadCount++;
 	}
 
 	// Draw solid from transform
@@ -373,39 +292,29 @@ namespace Crypt {
 		s_Data.Stats.QuadCount++;
 	}
 
+	// Calls Draw Rotated Solid Quads
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleRadians, const glm::vec4& color)
+	{
+		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angleRadians, color);
+	}
+
 	// Draw Rotated Solid Quads
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleRadians, const glm::vec4& color)
 	{
 		CRY_PROFILE_FUNCTION();
 
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
-		
-		constexpr size_t quadVertexCount = 4;
-		const float textureIndex = 0.0f; // White Texture
-		const float tilingfactor = 1.0f;
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::rotate(glm::mat4(1.0f), angleRadians, { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
+		DrawQuad(transform, color);
 
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
-		}
-
-		s_Data.QuadIndexCount += 6;
-		s_Data.Stats.QuadCount++;
+	}
+	
+	// Calls Draw Rotated Textured Quads
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleRadians, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
+	{
+		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angleRadians, texture, tilingfactor, tintcolor);
 
 	}
 
@@ -414,69 +323,66 @@ namespace Crypt {
 	{
 		CRY_PROFILE_FUNCTION();
 
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
-
-		constexpr size_t quadVertexCount = 4;
-		float textureIndex = 0.0f;
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		
-		
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		if (textureIndex == 0.0f)
-		{
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
-		}
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::rotate(glm::mat4(1.0f),angleRadians, { 0.0f, 0.0f, 1.0f })
+			* glm::rotate(glm::mat4(1.0f), angleRadians, { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = tintcolor;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
-		for (size_t i = 0; i < quadVertexCount; i++)
-		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
-		}
-		s_Data.QuadIndexCount += 6;
-
-		s_Data.Stats.QuadCount++;
+		DrawQuad(transform, texture, tilingfactor, tintcolor);
 	}
 
-	//Draw Rotated Texture Region Quads
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleRadians, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor )
+	// Calls Draw Texture Region Quads
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
+	{
+		DrawQuad({ position.x, position.y, 0.0f }, size, subtexture, tilingfactor, tintcolor);
+	}
+	
+	// Draw Texture Region Quads
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
 	{
 		CRY_PROFILE_FUNCTION();
 
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+		DrawQuad(transform, size, subtexture, tilingfactor, tintcolor);
+	}
+
+	// Calls Draw Rotated Texture Region Quads
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleRadians, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
+	{
+		DrawRotatedQuad(glm::vec3(position.x, position.y, 0.0f), size, angleRadians, subtexture, tilingfactor, tintcolor);
+	}
+
+	//Draw Rotated Texture Region Quads
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleRadians, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
+	{
+		CRY_PROFILE_FUNCTION();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::rotate(glm::mat4(1.0f), angleRadians, { 0.0f, 0.0f, 1.0f })
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+		DrawQuad(transform, size, subtexture, tilingfactor, tintcolor);
+	}
+
+	// Draw Texture Region Quads From Transform
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
+	{
+		CRY_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
-		float textureIndex = 0.0f;
+		constexpr glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
 		const glm::vec2* textureCoords = subtexture->GetTexCoords();
 		const Ref<Texture2D> texture = subtexture->GetTexture();
 
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
 
+
+		float textureIndex = 0.0f;
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			if (*s_Data.TextureSlots[i].get() == *texture)
 			{
 				textureIndex = (float)i;
 				break;
@@ -489,10 +395,6 @@ namespace Crypt {
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-			* glm::rotate(glm::mat4(1.0f),angleRadians, { 0.0f, 0.0f, 1.0f })
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
 			s_Data.QuadVertexBufferPtr->Position = pos;
@@ -507,10 +409,12 @@ namespace Crypt {
 		{
 			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
 		}
-		s_Data.QuadIndexCount += 6;
 
+		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
+
+	
 
 	void Renderer2D::ResetStats()
 	{

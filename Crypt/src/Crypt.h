@@ -18,6 +18,7 @@
 
 #include "Crypt/Scene/Scene.h"
 #include "Crypt/Scene/Entity.h"
+#include "Crypt/Scene/ScriptableEntity.h"
 #include "Crypt/Scene/Components.h"
 
 

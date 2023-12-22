@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Crypt/Renderer/Camera.h"
-
+#include "SceneCamera.h"
+#include "ScriptableEntity.h"
 #include <glm/glm.hpp>
 
 
@@ -20,13 +20,12 @@ namespace Crypt {
 
 	struct CameraComponent
 	{
-		Crypt::Camera Camera;
+		Crypt::SceneCamera Camera;
 		bool Primary = true; // TODO: Move to Scene
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Camera(projection) {}
 
 	};
 
@@ -55,6 +54,22 @@ namespace Crypt {
 		operator const glm::vec4& () const { return Color; }
 	};
 
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		ScriptableEntity*(*InsantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+
+		template< typename T>
+		void Bind()
+		{
+			InsantiateScript = []() {return static_cast<ScriptableEntity*>(new T());  };
+			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; nsc->Instance = nullptr;  };
+
+		}
+	};
 
 
 }
