@@ -235,13 +235,13 @@ namespace Crypt {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		if (m_BarrelEntity)
+		/*if (m_BarrelEntity)
 		{
 			ImGui::Separator();
 			ImGui::Text("%s", m_BarrelEntity.GetComponent<TagComponent>().Tag.c_str());
 			auto& barrelcolor = m_BarrelEntity.GetComponent<SpriteRendererComponent>().Color;
 			ImGui::ColorEdit4("Entity Color", glm::value_ptr(barrelcolor));
-		}
+		}*/
 
 		ImGui::DragFloat3("Camera Transform",
 			glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
