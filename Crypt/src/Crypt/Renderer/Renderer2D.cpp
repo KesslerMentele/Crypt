@@ -345,7 +345,7 @@ namespace Crypt {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		DrawQuad(transform, size, subtexture, tilingfactor, tintcolor);
+		DrawQuad(transform, subtexture, tilingfactor, tintcolor);
 	}
 
 	// Calls Draw Rotated Texture Region Quads
@@ -363,11 +363,11 @@ namespace Crypt {
 			* glm::rotate(glm::mat4(1.0f), angleRadians, { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		DrawQuad(transform, size, subtexture, tilingfactor, tintcolor);
+		DrawQuad(transform, subtexture, tilingfactor, tintcolor);
 	}
 
 	// Draw Texture Region Quads From Transform
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
 	{
 		CRY_PROFILE_FUNCTION();
 

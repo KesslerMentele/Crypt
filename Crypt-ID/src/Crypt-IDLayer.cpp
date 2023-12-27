@@ -56,15 +56,17 @@ namespace Crypt {
 		m_ActiveScene = CreateRef<Scene>();
 
 		// Entity
-		auto barrel = m_ActiveScene->CreateEntity("Barrel");
-		barrel.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
-		m_BarrelEntity = barrel;
+		auto square = m_ActiveScene->CreateEntity("Green Barrel");
+		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f}, m_TextureBarrel);
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+		auto redsquare = m_ActiveScene->CreateEntity("Red Barrel");
+		redsquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f }, m_TextureTree);
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 		m_CameraEntity.AddComponent<CameraComponent>();
 
 
-		m_SecondCamera = m_ActiveScene->CreateEntity("Second Camera");
+		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
 
@@ -226,7 +228,7 @@ namespace Crypt {
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 
-		ImGui::Begin("Settings");
+		ImGui::Begin("Statistics");
 
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
@@ -243,20 +245,10 @@ namespace Crypt {
 			ImGui::ColorEdit4("Entity Color", glm::value_ptr(barrelcolor));
 		}*/
 
-		ImGui::DragFloat3("Camera Transform",
-			glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-		if (ImGui::Checkbox("Main Camera", &m_PrimaryCamera))
+		if (ImGui::Checkbox("Secondary Camera", &m_PrimaryCamera))
 		{
 			m_SecondCamera.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
 			m_CameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-		}
-
-		{
-			auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-			float orthoSize = camera.GetOrhtographicSize();
-			if (ImGui::DragFloat("SecondCameraOrtho", &orthoSize))
-				camera.SetOrhtographicSize(orthoSize);
 		}
 
 		ImGui::Checkbox("Rotation", &m_Rotate);

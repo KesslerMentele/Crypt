@@ -38,7 +38,6 @@ namespace Crypt
 		// ---------------
 		
 		Ref<Scene> m_ActiveScene;
-		Entity m_BarrelEntity;
 		Entity m_SecondCamera;
 		Entity m_CameraEntity;
 

@@ -18,14 +18,8 @@
 	#define CRY_DEBUGBREAK() 
 #endif
 
-
-#ifdef CRY_ENABLE_ASSERTS
-	#define CRY_ASSERT(x,...) {if(!(x)) { CRY_ERROR("Assertion Failed: {0}", __VA_ARGS__); CRY_DEBUGBREAK(); } }
-	#define CRY_CORE_ASSERT(x,...) {if(!(x)) { CRY_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__);  CRY_DEBUGBREAK(); } }
-#else 
-	#define CRY_ASSERT(x,...) 
-	#define CRY_CORE_ASSERT(x,...)
-#endif
+#define CRY_EXPAND_MACRO(x) x
+#define CRY_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1 << x)
 
@@ -53,3 +47,6 @@ namespace Crypt {
 	}
 
 }
+
+#include "Crypt/Core/Log.h"
+#include "Crypt/Core/Assert.h"

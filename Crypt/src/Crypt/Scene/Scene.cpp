@@ -68,13 +68,17 @@ namespace Crypt {
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+			Renderer2D::BeginScene(*mainCamera, *cameraTransform);
 
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform, sprite.Color);
+
+				if (sprite.isSubTex)
+					Renderer2D::DrawQuad(transform, sprite.SubTexture, 1.0f, sprite.Color);
+				else
+					Renderer2D::DrawQuad(transform, sprite.Tex, 1.0f, sprite.Color);
 
 			}
 			Renderer2D::EndScene();

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Crypt/Core/Core.h"
-#include "Crypt/Core/Log.h"
 #include "Crypt/Scene/Scene.h"
 #include "Crypt/Scene/Entity.h"
 
