@@ -84,17 +84,17 @@ namespace Crypt {
 
 			void OnUpdate(Timestep ts)
 			{
-				auto& transform = GetComponent<TransformComponent>().Transform;
+				auto& translation = GetComponent<TransformComponent>().Translation;
 				float speed = 5.0f;
 
 				if (Input::IsKeyPressed(Key::A))
-					transform[3][0] -= speed * ts;
+					translation.x -= speed * ts;
 				if (Input::IsKeyPressed(Key::D))
-					transform[3][0] += speed * ts;
+					translation.x += speed * ts;
 				if (Input::IsKeyPressed(Key::W))
-					transform[3][1] += speed * ts;
+					translation.y += speed * ts;
 				if (Input::IsKeyPressed(Key::S))
-					transform[3][1] -= speed * ts;
+					translation.y -= speed * ts;
 			}
 		};
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
@@ -128,7 +128,7 @@ namespace Crypt {
 		// Render Submit
 		Renderer2D::ResetStats();
 		m_Framebuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::SetClearColor({ 0.086f, 0.086f, 0.118f, 1 });
 		RenderCommand::Clear();
 
 		// Update Scene
@@ -245,16 +245,7 @@ namespace Crypt {
 			ImGui::ColorEdit4("Entity Color", glm::value_ptr(barrelcolor));
 		}*/
 
-		if (ImGui::Checkbox("Secondary Camera", &m_PrimaryCamera))
-		{
-			m_SecondCamera.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-			m_CameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-		}
-
-		ImGui::Checkbox("Rotation", &m_Rotate);
-		m_CameraController.SetRotation(m_Rotate);
-
-			ImGui::End();
+		ImGui::End();
 
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });

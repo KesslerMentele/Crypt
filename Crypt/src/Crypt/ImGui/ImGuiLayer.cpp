@@ -38,6 +38,9 @@ namespace Crypt {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
+		
+		io.Fonts->AddFontFromFileTTF("assets/fonts/NotoSansMono-Bold.ttf", 18.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/NotoSansMono-Regular.ttf", 18.0f);
 
 		// Setup Dear Gui style
 		ImGui::StyleColorsDark();
