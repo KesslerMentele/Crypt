@@ -45,40 +45,8 @@ namespace Crypt {
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
-
-			if (ImGui::Button("Add Component"))
-				ImGui::OpenPopup("AddComponent");
-			
-			if (ImGui::BeginPopup("AddComponent"))
-			{
-				if (!m_SelectionContext.HasComponent<CameraComponent>())
-				{
-					if (ImGui::MenuItem("Camera"))
-					{
-						m_SelectionContext.AddComponent<CameraComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-				if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-				{
-					if (ImGui::MenuItem("SpriteRenderer"))
-					{
-						m_SelectionContext.AddComponent<SpriteRendererComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-				if (!m_SelectionContext.HasComponent<NativeScriptComponent>())
-				{
-					if (ImGui::MenuItem("Script"))
-					{
-						m_SelectionContext.AddComponent<NativeScriptComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-				ImGui::EndPopup();
-			}
-			
 		}
+
 		ImGui::End();
 
 	}
@@ -192,14 +160,20 @@ namespace Crypt {
 	template<typename ComponentType, typename UIFunction>
 	static void DrawComponent(const std::string& label, Entity entity, UIFunction uiFunction )
 	{
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
 		if (entity.HasComponent<ComponentType>())
 		{
-			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 			auto& component = entity.GetComponent<ComponentType>();
-			bool open = (ImGui::TreeNodeEx((void*)typeid(ComponentType).hash_code(), treeNodeFlags, label.c_str()));
+			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
-			ImGui::SameLine();
-			if (ImGui::Button("+"))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
+			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+			ImGui::Separator();
+			bool open = (ImGui::TreeNodeEx((void*)typeid(ComponentType).hash_code(), treeNodeFlags, label.c_str()));
+			ImGui::PopStyleVar();
+
+			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+			if (ImGui::Button("+", ImVec2(lineHeight, lineHeight)))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
@@ -235,10 +209,45 @@ namespace Crypt {
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			if (ImGui::InputText("##", buffer, sizeof(buffer))) 
+			if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) 
 			{
 				tag = std::string(buffer);
 			}
+		}
+
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+		
+		if (ImGui::Button("Add Component"))
+			ImGui::OpenPopup("AddComponent");
+
+		if (ImGui::BeginPopup("AddComponent"))
+		{
+			if (!m_SelectionContext.HasComponent<CameraComponent>())
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
+			{
+				if (ImGui::MenuItem("SpriteRenderer"))
+				{
+					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			if (!m_SelectionContext.HasComponent<NativeScriptComponent>())
+			{
+				if (ImGui::MenuItem("Script"))
+				{
+					m_SelectionContext.AddComponent<NativeScriptComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			ImGui::EndPopup();
 		}
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component) 
