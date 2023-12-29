@@ -6,7 +6,7 @@
 #include "ScriptableEntity.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <optional>
 
 namespace Crypt {
 	
@@ -19,6 +19,11 @@ namespace Crypt {
 		TagComponent(const std::string& tag)
 			: Tag(tag) {}
 
+		void Update(const std::string& newTag)
+		{
+			Tag = newTag;
+		}
+
 	};
 
 	struct CameraComponent
@@ -29,6 +34,15 @@ namespace Crypt {
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const bool primary, const bool fixedAspectRatio)
+			: Primary(primary), FixedAspectRatio(fixedAspectRatio) {}
+
+		void Update(const std::optional<bool>& primary = std::nullopt,
+			const std::optional<bool>& fixedAspectRatio = std::nullopt)
+		{
+			if (primary) Primary = *primary;
+			if (fixedAspectRatio) FixedAspectRatio = *fixedAspectRatio;
+		}
 
 	};
 
@@ -42,6 +56,17 @@ namespace Crypt {
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3& translation)
 			: Translation(translation) {}
+		TransformComponent(const glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale)
+			: Translation(translation), Rotation(rotation), Scale(scale) {}
+
+		void Update(const std::optional<glm::vec3>& translation = std::nullopt,
+			const std::optional<glm::vec3>& rotation = std::nullopt,
+			const std::optional<glm::vec3>& scale = std::nullopt)
+		{
+			if (translation) Translation = *translation;
+			if (rotation) Rotation = *rotation;
+			if (scale) Scale = *scale;
+		}
 
 		glm::mat4 GetTransform() const
 		{
@@ -65,7 +90,8 @@ namespace Crypt {
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color);
+		SpriteRendererComponent(const glm::vec4& color)
+			: Color(color) {}
 		SpriteRendererComponent(const glm::vec4& color, Ref<Texture2D>& texture)
 			:Color(color), Tex(texture) {
 			hasTexture = true;
@@ -73,6 +99,11 @@ namespace Crypt {
 		SpriteRendererComponent(const glm::vec4& color, Ref<SubTexture2D>& subTexture)
 			:Color(color), SubTexture(subTexture) {
 			hasSubTex = true;
+		}
+
+		void Update(glm::vec4& color)
+		{
+			Color = color;
 		}
 
 		operator glm::vec4& () { return Color; }
@@ -87,6 +118,7 @@ namespace Crypt {
 		ScriptableEntity*(*InsantiateScript)();
 		void (*DestroyScript)(NativeScriptComponent*);
 
+		void Update() {}
 
 		template< typename T>
 		void Bind()

@@ -8,6 +8,8 @@
 
 #include "Crypt/Core/Application.h"
 
+
+
 // Temporary
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>

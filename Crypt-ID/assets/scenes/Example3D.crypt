@@ -1,0 +1,72 @@
+Scene: Untitled
+Entities:
+  - Entity: 245982924
+    TagComponent:
+      Tag: Bottom
+    TransformComponent:
+      Translation: [0, -0.5, 0]
+      Rotation: [1.57079637, 0, 0.785398185]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.909803927, 0, 0, 1]
+      Has Texture: false
+      Texture: Not Yet Implemented!
+      Has SubTexture: false
+      SubTexture: Not Yet Implemented!
+  - Entity: 245982924
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [0, 0.5, 0]
+      Rotation: [1.57079637, 0, 0.785398185]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.909803927, 0, 0, 1]
+      Has Texture: false
+      Texture: Not Yet Implemented!
+      Has SubTexture: false
+      SubTexture: Not Yet Implemented!
+  - Entity: 245982924
+    TagComponent:
+      Tag: Right
+    TransformComponent:
+      Translation: [0.349999994, 0, 0.349999994]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.70588237, 0, 0, 1]
+      Has Texture: false
+      Texture: Not Yet Implemented!
+      Has SubTexture: false
+      SubTexture: Not Yet Implemented!
+  - Entity: 245982924
+    TagComponent:
+      Tag: Left
+    TransformComponent:
+      Translation: [-0.349999994, 0, 0.349999994]
+      Rotation: [0, -0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Has Texture: false
+      Texture: Not Yet Implemented!
+      Has SubTexture: false
+      SubTexture: Not Yet Implemented!
+  - Entity: 245982924
+    TagComponent:
+      Tag: Camera A
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        Ortho Size: 10
+        Ortho FarClip: 1
+        Ortho NearClip: -1
+        Perspective VerticalFOV: 0.785398185
+        Perspective FarClip: 1000
+        Perspective NearClip: 0.00999999978
+      Primary: true
+      FixedAspectRatio: false
+    TransformComponent:
+      Translation: [0, 1.60000002, 4.80000019]
+      Rotation: [-0.314159274, 0, 0]
+      Scale: [1, 1, 1]

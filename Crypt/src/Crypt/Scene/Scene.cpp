@@ -78,7 +78,6 @@ namespace Crypt {
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
 				if (sprite.hasSubTex)
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.SubTexture, 1.0f, sprite.Color);
 				else if (sprite.hasTexture)

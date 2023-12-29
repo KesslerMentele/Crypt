@@ -29,6 +29,25 @@ namespace Crypt {
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
+		template<typename T, typename... Args>
+		T& AddOrUpdateComponent(Args&&... args)
+		{
+			if (HasComponent<T>())
+			{
+				UpdateComponent<T>(std::forward<Args>(args)...);
+				return GetComponent<T>();
+			}
+			return AddComponent<T>(std::forward<Args>(args)...);
+		}
+
+		template<typename T, typename... Args>
+		void UpdateComponent(Args&&... args)
+		{
+			CRY_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			T& component = m_Scene->m_Registry.get<T>(m_EntityHandle);
+			component.Update(std::forward<Args>(args)...);
+		}
+
 		template<typename T>
 		bool HasComponent()
 		{
