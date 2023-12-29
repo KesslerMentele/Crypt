@@ -11,3 +11,9 @@
 [submodule "Crypt/vendor/glm"]
     path = Crypt/vendor/glm
     url = https://github.com/g-truc/glm/
+[submodule "Crypt/vendor/Crypt/vendor"]
+	path = Crypt/vendor/Crypt/vendor
+	url = https://github.com/thecherno/yaml-cpp
+[submodule "Crypt/vendor/yaml-cpp"]
+	path = Crypt/vendor/yaml-cpp
+	url = https://github.com/thecherno/yaml-cpp
