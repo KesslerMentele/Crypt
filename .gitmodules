@@ -17,3 +17,6 @@
 [submodule "Crypt/vendor/yaml-cpp"]
 	path = Crypt/vendor/yaml-cpp
 	url = https://github.com/thecherno/yaml-cpp
+[submodule "Crypt/vendor/imguizmo"]
+	path = Crypt/vendor/imguizmo
+	url = https://github.com/thecherno/imguizmo
