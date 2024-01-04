@@ -30,6 +30,7 @@ workspace "Crypt"
 	IncludeDir["entt"] = "%{wks.location}/Crypt/vendor/entt/include"
 	IncludeDir["yaml_cpp"] = "%{wks.location}/Crypt/vendor/yaml-cpp/include"
 	IncludeDir["stb_image"] = "%{wks.location}/Crypt/vendor/stb_image"
+	IncludeDir["ImGuizmo"] = "%{wks.location}/Crypt/vendor/imguizmo"
 
 	group "Dependencies"
 		include "vendor/premake"

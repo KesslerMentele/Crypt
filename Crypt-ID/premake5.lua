@@ -19,7 +19,8 @@ project "Crypt-ID"
 		"%{wks.location}/Crypt/src",
 		"%{wks.location}/Crypt/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.imguizmo}"
 	}
 
 	links

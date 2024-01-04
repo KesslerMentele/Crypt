@@ -18,6 +18,8 @@ project "Crypt"
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
+		"vendor/imguizmo/ImGuizmo.h",
+		"vendor/imguizmo/ImGuizmo.cpp"
 	}
 
 	defines
@@ -36,7 +38,8 @@ project "Crypt"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links
@@ -48,6 +51,9 @@ project "Crypt"
 		"yaml-cpp",
 		"dwmapi.lib"
 	}
+
+	filter "files:vendor/ImGuizmo/**.cpp"
+	flags {"NoPCH"}
 
 	filter "system:windows"
 		systemversion "latest"

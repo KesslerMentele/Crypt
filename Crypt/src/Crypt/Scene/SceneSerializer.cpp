@@ -21,6 +21,7 @@ namespace YAML
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 
@@ -46,6 +47,7 @@ namespace YAML
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
 			node.push_back(rhs.w);
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 
@@ -195,72 +197,72 @@ namespace Crypt {
 
 	bool SceneSerializer::DeserializeText(const std::string& filepath)
 	{
-		std::ifstream stream(filepath);
-		std::stringstream strStream;
-		strStream << stream.rdbuf();
-
-		YAML::Node data = YAML::Load(strStream.str());
-		if (!data["Scene"])
-			return false;
-		std::string sceneName = data["Scene"].as<std::string>();
-		CRY_CORE_TRACE("Deserializing scene '{0}'", sceneName);
-
-		auto entities = data["Entities"];
-		if (entities)
+		if (!filepath.empty())
 		{
-			for (auto entity : entities)
+			YAML::Node data = YAML::LoadFile(filepath);
+			if (!data["Scene"])
+				return false;
+			std::string sceneName = data["Scene"].as<std::string>();
+			CRY_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+
+			auto entities = data["Entities"];
+			if (entities)
 			{
-				uint64_t uuid = entity["Entity"].as<uint64_t>();
-				std::string name;
-				auto tagComponent = entity["TagComponent"];
-				if (tagComponent)
+				for (auto entity : entities)
 				{
-					name = tagComponent["Tag"].as<std::string>();
-				}
-				
-				CRY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+					uint64_t uuid = entity["Entity"].as<uint64_t>();
+					std::string name;
+					auto tagComponent = entity["TagComponent"];
+					if (tagComponent)
+					{
+						name = tagComponent["Tag"].as<std::string>();
+					}
 
-				Entity deserializedEntity = m_Scene->CreateEntity(name);
-				
-				auto cameraComponent = entity["CameraComponent"];
-				if (cameraComponent)
-				{
-					auto& cc = deserializedEntity.AddOrUpdateComponent<CameraComponent>(cameraComponent["Primary"].as<bool>(), cameraComponent["FixedAspectRatio"].as<bool>());
-					auto& cameraProps = cameraComponent["Camera"];
-					cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
-					cc.Camera.SetOrthographicSize(cameraProps["Ortho Size"].as<float>());
-					cc.Camera.SetOrthographicFarClip(cameraProps["Ortho FarClip"].as<float>());
-					cc.Camera.SetOrthographicNearClip(cameraProps["Ortho NearClip"].as<float>());
-					cc.Camera.SetPerspectiveVerticalFOV(cameraProps["Perspective VerticalFOV"].as<float>());
-					cc.Camera.SetPerspectiveFarClip(cameraProps["Perspective FarClip"].as<float>());
-					cc.Camera.SetPerspectiveNearClip(cameraProps["Perspective NearClip"].as<float>());
+					CRY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+
+					Entity deserializedEntity = m_Scene->CreateEntity(name);
+
+					auto cameraComponent = entity["CameraComponent"];
+					if (cameraComponent)
+					{
+						auto& cc = deserializedEntity.AddOrUpdateComponent<CameraComponent>(cameraComponent["Primary"].as<bool>(), cameraComponent["FixedAspectRatio"].as<bool>());
+						auto& cameraProps = cameraComponent["Camera"];
+						cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
+						cc.Camera.SetOrthographicSize(cameraProps["Ortho Size"].as<float>());
+						cc.Camera.SetOrthographicFarClip(cameraProps["Ortho FarClip"].as<float>());
+						cc.Camera.SetOrthographicNearClip(cameraProps["Ortho NearClip"].as<float>());
+						cc.Camera.SetPerspectiveVerticalFOV(cameraProps["Perspective VerticalFOV"].as<float>());
+						cc.Camera.SetPerspectiveFarClip(cameraProps["Perspective FarClip"].as<float>());
+						cc.Camera.SetPerspectiveNearClip(cameraProps["Perspective NearClip"].as<float>());
+
+					}
+
+					auto transformComponent = entity["TransformComponent"];
+					if (transformComponent)
+					{
+						auto& tc = deserializedEntity.AddOrUpdateComponent<TransformComponent>(transformComponent["Translation"].as<glm::vec3>(),
+							transformComponent["Rotation"].as<glm::vec3>(),
+							transformComponent["Scale"].as<glm::vec3>());
+					}
+
+					auto spriteRendererComponent = entity["SpriteRendererComponent"];
+					if (spriteRendererComponent)
+					{
+						auto& sprite = deserializedEntity.AddOrUpdateComponent<SpriteRendererComponent>(spriteRendererComponent["Color"].as<glm::vec4>());
+						// TODO: Add Tex and SubTex Support
+					}
+
+					auto nativeScriptComponent = entity["NativeScriptComponent"];
+					if (nativeScriptComponent)
+					{
+						//TODO: Make this work
+					}
 
 				}
-				
-				auto transformComponent = entity["TransformComponent"];
-				if (transformComponent)
-				{
-					auto& tc = deserializedEntity.AddOrUpdateComponent<TransformComponent>(transformComponent["Translation"].as<glm::vec3>(), 
-						transformComponent["Rotation"].as<glm::vec3>(), 
-						transformComponent["Scale"].as<glm::vec3>());
-				}
-				 
-				auto spriteRendererComponent = entity["SpriteRendererComponent"];
-				if (spriteRendererComponent)
-				{
-					auto& sprite = deserializedEntity.AddOrUpdateComponent<SpriteRendererComponent>(spriteRendererComponent["Color"].as<glm::vec4>());
-					// TODO: Add Tex and SubTex Support
-				}
-				
-				auto nativeScriptComponent = entity["NativeScriptComponent"];
-				if (nativeScriptComponent)
-				{
-					//TODO: Make this work
-				}
-
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	bool SceneSerializer::DeserializeBinary(const std::string& filepath)

@@ -8,25 +8,14 @@
 
 #include "Crypt/Utils/PlatformUtils.h"
 
+#include "imguizmo/ImGuizmo.h"
+
+#include "Crypt/Math/Math.h"
+
 namespace Crypt {
 
-	static const uint32_t s_MapWidth = 24;
-	static const char* s_MapTiles =
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWDDDDWWWWWWWWWWWWW"
-		"WWWWWDDGGGGDDDDDWWWWWWWW"
-		"WWWWDGGGGGGGGGGGDDDWWWWW"
-		"WWWDGGGGGGGDDDGGGGGDWWWW"
-		"WWWDGGGGGGDDDDDGGGGGDWWW"
-		"WWWDGGGGGGDDDDDDGGGDDWWW"
-		"WWWDGGGGGGDDDDDGGGGDDWWW"
-		"WWWWDGGGGGGDDGGGGGGDDWWW"
-		"WWWWWDDDDDDDDDDDDDDWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW";
-
 	CryptIDLayer::CryptIDLayer()
-		:Layer("CryptIDLayer"), m_CameraController(1280.0f / 720.0f)
+		:Layer("CryptIDLayer")
 	{
 	}
 	void CryptIDLayer::OnAttach()
@@ -35,29 +24,18 @@ namespace Crypt {
 
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
-		m_SpriteSheet = Texture2D::Create("assets/game/textures/RPGpack_sheet_2X.png");
 
-		m_TextureStairs = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 7, 6 }, { 128,128 });
-		m_TextureBarrel = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 9, 1 }, { 128,128 });
-		m_TextureTree = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128,128 }, { 1, 2 });
-		m_TextureAllGrass = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 1, 11 }, { 128,128 });
-
-
-		m_MapWidth = s_MapWidth;
-		m_MapHeight = strlen(s_MapTiles) / s_MapWidth;
-
-		s_TextureMap['G'] = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 1, 11 }, { 128,128 });
-		s_TextureMap['W'] = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 11, 11 }, { 128,128 });
-		s_TextureMap['D'] = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 6, 11 }, { 128,128 });
-
-		m_CameraController.SetZoomLevel(5.0f);
 
 		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth,  };
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
+
+		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
 #if 0
 		// Entity
 		auto square = m_ActiveScene->CreateEntity("Green Barrel");
@@ -107,10 +85,6 @@ namespace Crypt {
 #endif
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-		
-		//
-		
 	}
 
 	void CryptIDLayer::OnDetach()
@@ -126,15 +100,15 @@ namespace Crypt {
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
 		// Update
-		if (m_ViewportFocused)
-			m_CameraController.OnUpdate(ts);
-	 
+		if (m_ViewportFocused) {}
+
+		m_EditorCamera.OnUpdate(ts);
+
 		// Render Submit
 		Renderer2D::ResetStats();
 		m_Framebuffer->Bind();
@@ -142,9 +116,24 @@ namespace Crypt {
 		RenderCommand::Clear();
 
 		// Update Scene
-		static float rotation = 0.0f;
-		rotation += ts * 50.0f;
-		m_ActiveScene->OnUpdate(ts);
+		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+
+		auto[mx, my] = ImGui::GetMousePos();
+
+		mx -= m_ViewportBounds[0].x;
+		my -= m_ViewportBounds[0].y;
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		my = viewportSize.y - my;
+
+		int mouseX = (int)mx;
+		int mouseY = (int)my;
+
+		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+		{
+			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			CRY_CORE_WARN("Pixel Data =  {0}", pixelData);
+		}
+
 		m_Framebuffer->Unbind();
 
 #if 0
@@ -253,7 +242,7 @@ namespace Crypt {
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 
-		ImGui::Begin("Statistics");
+		ImGui::Begin("Stats");
 
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
@@ -262,48 +251,98 @@ namespace Crypt {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		/*if (m_BarrelEntity)
-		{
-			ImGui::Separator();
-			ImGui::Text("%s", m_BarrelEntity.GetComponent<TagComponent>().Tag.c_str());
-			auto& barrelcolor = m_BarrelEntity.GetComponent<SpriteRendererComponent>().Color;
-			ImGui::ColorEdit4("Entity Color", glm::value_ptr(barrelcolor));
-		}*/
-
 		ImGui::End();
 
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Viewport");
+		auto viewportOffset = ImGui::GetCursorPos(); // Includes Tab Bar
+
+
 		m_ViewportFocused = ImGui::IsWindowFocused(); //get key events
 		m_ViewportHovered = ImGui::IsWindowHovered(); //get scroll events
-		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-		/*if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
-		{
-			m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-			m_ViewportSize = { viewportPanelSize.x,viewportPanelSize.y };
-
-			m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-		}*/
+		
 
 		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		
+		auto windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		m_ViewportBounds[0] = { minBound.x, minBound.y };
+		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
+
+
+		// Gizmos --------------------
+
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			float windowWidth = (float)ImGui::GetWindowWidth();
+			float windowHeight = (float)ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+			// Runtime Camera
+			/*auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			const glm::mat4& cameraProjection = camera.GetProjection();*/
+
+
+			// Editor Camera
+			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+			// Entity Transform
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.GetTransform();
+
+			// Snapping
+			bool snap = Input::IsKeyPressed(Key::LeftControl);
+			float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+				snapValue = 15.0f; // Snap to 15 degrees for rotations
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),nullptr, snap ? snapValues : nullptr);
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+
+				tc.Translation = translation;
+				tc.Rotation += deltaRotation;
+				tc.Scale = scale;
+			}
+		}
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 		ImGui::End();
-
-
 	}
 
-	void CryptIDLayer::OnEvent(Event& event)
+	void CryptIDLayer::OnEvent(Event& e)
 	{
-		m_CameraController.OnEvent(event);
+		m_EditorCamera.OnEvent(e);
 
-		EventDispatcher dispatcher(event);
+		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(CRY_BIND_EVENT_FN(CryptIDLayer::OnKeyPressed));
 	}
 	bool CryptIDLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -334,6 +373,21 @@ namespace Crypt {
 				NewScene();
 			break;
 		}
+
+		// Gizmos
+		case Key::Q:
+			m_GizmoType = -1;
+			break;
+		case Key::W:
+			m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			break;
+		case Key::E:
+			m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			break;
+		case Key::R:
+			m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			break;
+
 		}
 
 		return false;
@@ -346,23 +400,23 @@ namespace Crypt {
 	}
 	void CryptIDLayer::OpenScene()
 	{
-		std::string filepath = FileDialogs::OpenFile("Crypt Scene (*.crypt)\0*.crypt\0");
+		std::optional<std::string> filepath = FileDialogs::OpenFile("Crypt Scene (*.crypt)\0*.crypt\0");
 
-		if (!filepath.empty())
+		if (filepath)
 		{
 			NewScene();
 
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.DeserializeText(filepath);
+			serializer.DeserializeText(*filepath);
 		}
 	}
 	void CryptIDLayer::SaveSceneAs()
 	{
-		std::string filepath = FileDialogs::SaveFile("Crypt Scene (*.crypt)\0*.crypt\0");
-		if (!filepath.empty())
+		std::optional<std::string> filepath = FileDialogs::SaveFile("Crypt Scene (*.crypt)\0*.crypt\0");
+		if (filepath)
 		{
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.SerializeText(filepath);
+			serializer.SerializeText(*filepath);
 		}
 	}
 }

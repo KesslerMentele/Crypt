@@ -56,6 +56,11 @@ namespace Crypt {
 
 	}
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 	void Application::OnEvent(Event& e)
 	{
 		CRY_PROFILE_FUNCTION();
@@ -64,43 +69,13 @@ namespace Crypt {
 		dispatcher.Dispatch<WindowCloseEvent>(CRY_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(CRY_BIND_EVENT_FN(Application::OnWindowResize));
 
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
-			(*--it)->OnEvent(e);
 			if (e.Handled)
 				break;
+			(*it)->OnEvent(e);
 		}
 
-	}
-
-	bool Application::OnWindowClose(WindowCloseEvent& e)
-	{
-		CRY_PROFILE_FUNCTION();
-
-		m_Running = false;
-		return true;
-	}
-	bool Application::OnWindowResize(WindowResizeEvent& e)
-	{
-		CRY_PROFILE_FUNCTION();
-
-		if (e.GetWidth() == 0 || e.GetHeight() == 0)
-		{
-			m_Minimized = true;
-			return false;
-		}
-		
-		m_Minimized = false;
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
-
-
-		return false;
-	}
-
-
-	void Application::Close()
-	{
-		m_Running = false;
 	}
 
 	void Application::Run()
@@ -137,5 +112,30 @@ namespace Crypt {
 
 		}
 		
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		CRY_PROFILE_FUNCTION();
+
+		m_Running = false;
+		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		CRY_PROFILE_FUNCTION();
+
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+
+		return false;
 	}
 }

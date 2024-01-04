@@ -3,7 +3,7 @@
 #include "Crypt.h"
 #include "Panels/SceneHierarchyPanel.h"
 
-
+#include "Crypt/Renderer/EditorCamera.h"
 
 namespace Crypt
 {
@@ -29,35 +29,33 @@ namespace Crypt
 		void SaveSceneAs();
 
 	private:
-		OrthographicCameraController m_CameraController;
 		
 		// ---Temporary---
 		Ref<VertexArray> m_SquareVA;
 		Ref<Shader> m_FlatColorShader;
 		Ref<Framebuffer> m_Framebuffer;
 
-		Ref<Texture2D> m_CheckerboardTexture;
-		Ref<Texture2D> m_SpriteSheet;
-		Ref<SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree, m_TextureAllGrass;
-
-		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
-
 		// ---------------
-		
+
 		Ref<Scene> m_ActiveScene;
 		Entity m_SecondCamera;
 		Entity m_CameraEntity;
 
 		bool m_PrimaryCamera = false;
 
+		EditorCamera m_EditorCamera;
+
+		Ref<Texture2D> m_CheckerboardTexture;
+
 		bool m_Rotate = false;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
+		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
+		glm::vec2 m_ViewportBounds[2];
 
 		glm::vec4 m_SquareColor = { 0.2f,0.3f, 0.8f, 1.0f };
 
-		uint32_t m_MapWidth, m_MapHeight;
-		std::unordered_map<char, Ref<SubTexture2D>> s_TextureMap;
+		int m_GizmoType = -1;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;

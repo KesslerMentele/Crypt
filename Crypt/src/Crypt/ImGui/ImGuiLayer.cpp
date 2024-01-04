@@ -8,11 +8,12 @@
 
 #include "Crypt/Core/Application.h"
 
-
-
 // Temporary
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+
+#include "imguizmo.h"
+
 
 namespace Crypt {
 
@@ -64,7 +65,7 @@ namespace Crypt {
 		// Setup platfor/renderer bindings
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 300 es");
+		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -93,6 +94,7 @@ namespace Crypt {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

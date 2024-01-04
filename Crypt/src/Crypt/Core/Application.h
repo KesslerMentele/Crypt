@@ -28,8 +28,6 @@ namespace Crypt {
 
 		Window& GetWindow() { return *m_Window; }
 
-		//void MoveCamera(KeyPressedEvent& e); - Unnecessary?
-
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
@@ -41,7 +39,7 @@ namespace Crypt {
 		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		bool m_Minimized = false;
