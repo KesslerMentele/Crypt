@@ -13,6 +13,11 @@
 *.vcxproj.filters
 *.sln
 
+# Directories
+Crypt/vendor/VulkanSDK
+Crypt-ID/assets/cache
+scripts/__pycache__
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

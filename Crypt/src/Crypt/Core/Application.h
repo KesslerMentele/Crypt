@@ -14,10 +14,24 @@
 int main(int argc, char** argv);
 
 namespace Crypt {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			CRY_CORE_ASSERT(index < Count);
+			return Args[index];
+		}
+	};
+
+
 	class Application
 	{
 	public:
-		Application(const std::string& name = "Crypt App");
+		Application(const std::string& name = "Crypt App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 
 
@@ -33,12 +47,15 @@ namespace Crypt {
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		inline static Application& Get() { return *s_Instance; }
+
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
 	private:
 		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
@@ -55,5 +72,6 @@ namespace Crypt {
 
 	// To be defined in Client
 	Application* CreateApplication();
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 }
 

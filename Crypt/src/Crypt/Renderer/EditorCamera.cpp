@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 
+//#define GLM_FORCE_QUAT_DATA_WXYZ  // add if veiwport blank after Vulkan Install
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
