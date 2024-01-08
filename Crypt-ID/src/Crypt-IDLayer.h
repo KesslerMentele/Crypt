@@ -40,6 +40,7 @@ namespace Crypt
 		Ref<Scene> m_ActiveScene;
 		Entity m_SecondCamera;
 		Entity m_CameraEntity;
+		Entity m_HoveredEntity;
 
 		bool m_PrimaryCamera = false;
 

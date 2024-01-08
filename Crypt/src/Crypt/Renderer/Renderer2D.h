@@ -7,6 +7,8 @@
 #include "Crypt/Renderer/SubTexture2D.h"
 #include "Crypt/Renderer/EditorCamera.h"
 
+#include "Crypt/Scene/Components.h"
+
 namespace Crypt {
 
 	class Renderer2D
@@ -23,6 +25,7 @@ namespace Crypt {
 		static void EndScene();
 		static void Flush();
 
+
 		// Primitives
 
 		// Draw flat color non-rotated
@@ -38,9 +41,9 @@ namespace Crypt {
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 
 		// Draw from transform
-		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
-		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
-		static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor);
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f), int entityID = -1);
+		static void DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor, int entityID = -1);
 
 		// Draw flat color rotated
 		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const glm::vec4& color);
@@ -54,6 +57,7 @@ namespace Crypt {
 		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
 
 		// Stats
 		struct Statistics

@@ -77,6 +77,17 @@ namespace Crypt {
 			return false;
 		}
 
+		static GLenum CryptFBTexToGL(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFormat::RGBA8:		return GL_RGBA8;
+			case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			}
+			CRY_CORE_ASSERT(false);
+			return 0;
+		}
+
 	}
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
@@ -171,6 +182,8 @@ namespace Crypt {
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+
+		
 	}
 
 	void OpenGLFramebuffer::Unbind()
@@ -199,6 +212,13 @@ namespace Crypt {
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 		return pixelData;
+	}
+
+	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		CRY_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
+		auto& spec = m_ColorAttachmentSpecs[attachmentIndex];
+		glClearTexImage(m_ColorAttachments[1], 0, Utils::CryptFBTexToGL(spec.TextureFormat), GL_INT, &value);
 	}
 
 

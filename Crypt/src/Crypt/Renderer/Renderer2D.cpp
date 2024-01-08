@@ -17,6 +17,9 @@ namespace Crypt {
 		float TexIndex;
 		float TilingFactor;
 		// TODO: MaskID
+
+		// Editor Only
+		int EntityID;
 	};
 
 	struct Renderer2DData
@@ -47,6 +50,16 @@ namespace Crypt {
 
 	static Renderer2DData s_Data;
 
+	auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord, const glm::vec4& color, float textureIndex, float tilingfactor, int entityID) {
+		s_Data.QuadVertexBufferPtr->Position = pos;
+		s_Data.QuadVertexBufferPtr->Color = color;
+		s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
+		s_Data.QuadVertexBufferPtr->EntityID = entityID;
+		s_Data.QuadVertexBufferPtr++;
+		};
+
 	void Renderer2D::Init()
 	{
 		CRY_PROFILE_FUNCTION();
@@ -60,7 +73,8 @@ namespace Crypt {
 			{ShaderDataType::Float4, "a_Color"},
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" }
+			{ ShaderDataType::Float, "a_TilingFactor" },
+			{ ShaderDataType::Int, "a_EntityID" }
 			});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -164,8 +178,6 @@ namespace Crypt {
 		Flush();
 	}
 
-
-
 	void Renderer2D::Flush()
 	{
 		if (s_Data.QuadIndexCount == 0)
@@ -230,7 +242,7 @@ namespace Crypt {
 	}
 
 	// Draw solid from transform
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
 		CRY_PROFILE_FUNCTION();
 
@@ -242,18 +254,9 @@ namespace Crypt {
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
 
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
+			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i], color, textureIndex, tilingfactor, entityID);
 		}
 
 		s_Data.QuadIndexCount += 6;
@@ -261,7 +264,7 @@ namespace Crypt {
 	}
 
 	// Draw textured from transform
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingfactor, glm::vec4& tintcolor, int entityID)
 	{
 		CRY_PROFILE_FUNCTION();
 
@@ -292,18 +295,9 @@ namespace Crypt {
 			s_Data.TextureSlotIndex++;
 		}
 
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = tintcolor;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
+			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i], tintcolor, textureIndex, tilingfactor, entityID);
 		}
 
 		s_Data.QuadIndexCount += 6;
@@ -383,8 +377,9 @@ namespace Crypt {
 		DrawQuad(transform, subtexture, tilingfactor, tintcolor);
 	}
 
+
 	// Draw Texture Region Quads From Transform
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, float tilingfactor, glm::vec4& tintcolor, int entityID)
 	{
 		CRY_PROFILE_FUNCTION();
 
@@ -416,25 +411,24 @@ namespace Crypt {
 			s_Data.TextureSlotIndex++;
 		}
 
-		auto setQuadVertex = [&](const glm::vec3& pos, const glm::vec2& texCoord) {
-			s_Data.QuadVertexBufferPtr->Position = pos;
-			s_Data.QuadVertexBufferPtr->Color = tintcolor;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoord;
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingfactor;
-			s_Data.QuadVertexBufferPtr++;
-			};
-
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i]);
+			setQuadVertex(transform * s_Data.QuadVertexPositions[i], textureCoords[i], tintcolor, textureIndex, tilingfactor, entityID);
 		}
 
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
 
-	
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+	{
+		if (src.hasTexture)
+			DrawQuad(transform, src.Tex, 1.0f, src.Color, entityID);
+		else if (src.hasSubTex)
+			DrawQuad(transform, src.SubTexture, 1.0f, src.Color, entityID);
+		else 
+			DrawQuad(transform, src.Color, entityID);
+	}
 
 	void Renderer2D::ResetStats()
 	{
