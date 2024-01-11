@@ -34,6 +34,13 @@ namespace Crypt {
 
 		m_ActiveScene = CreateRef<Scene>();
 
+		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		if (commandLineArgs.Count > 1)
+		{
+			auto sceneFilePath = commandLineArgs[1];
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.DeserializeText(sceneFilePath);
+		}
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 #if 0
@@ -139,32 +146,6 @@ namespace Crypt {
 		}
 
 		m_Framebuffer->Unbind();
-
-#if 0
-
-		Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		for (uint32_t y = 0; y < m_MapHeight; y++)
-		{
-			for (uint32_t x = 0; x < m_MapWidth; x++)
-			{
-				char tileType = s_MapTiles[x + y * m_MapWidth];
-				Ref<SubTexture2D> texture;
-				if (s_TextureMap.find(tileType) != s_TextureMap.end())
-					texture = s_TextureMap[tileType];
-				else
-					texture = m_TextureBarrel;
-				Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, y - m_MapHeight / 2.0f, 0.0f }, { 1.0f,1.0f }, texture);
-			}
-		}
-
-
-		//Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureAllGrass);
-		//Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
-		Renderer2D::DrawQuad({ 1.0f, 1.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
-		Renderer2D::DrawQuad({ -1.0f, 1.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
-		//Renderer2D::DrawQuad({ -1.0f, 0.5f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
-#endif
 	}
 
 	void CryptIDLayer::OnImGuiRender()
@@ -414,23 +395,23 @@ namespace Crypt {
 	}
 	void CryptIDLayer::OpenScene()
 	{
-		std::optional<std::string> filepath = FileDialogs::OpenFile("Crypt Scene (*.crypt)\0*.crypt\0");
+		std::string filepath = FileDialogs::OpenFile("Crypt Scene (*.crypt)\0*.crypt\0");
 
-		if (filepath)
+		if (!filepath.empty())
 		{
 			NewScene();
 
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.DeserializeText(*filepath);
+			serializer.DeserializeText(filepath);
 		}
 	}
 	void CryptIDLayer::SaveSceneAs()
 	{
-		std::optional<std::string> filepath = FileDialogs::SaveFile("Crypt Scene (*.crypt)\0*.crypt\0");
-		if (filepath)
+		std::string filepath = FileDialogs::SaveFile("Crypt Scene (*.crypt)\0*.crypt\0");
+		if (!filepath.empty())
 		{
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.SerializeText(*filepath);
+			serializer.SerializeText(filepath);
 		}
 	}
 }

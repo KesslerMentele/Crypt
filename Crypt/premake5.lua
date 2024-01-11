@@ -40,7 +40,7 @@ project "Crypt"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{INcludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}"
 	}
 
 	links
@@ -94,7 +94,7 @@ project "Crypt"
 		runtime "Release"
 		optimize "on"
 
-		inks
+		links
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",

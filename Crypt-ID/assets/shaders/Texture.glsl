@@ -55,12 +55,10 @@ layout (location = 4) in flat int v_EntityID;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
 
-uniform sampler2D u_Textures[32];
-
 void main()
 {
 	vec4 texColor = Input.Color;
-	switch(Input.TexIndex)
+	switch(int(Input.TexIndex))
 	{
 		case 0: texColor *= texture(u_Textures[0], Input.TexCoord * Input.TilingFactor); break;
 		case 1: texColor *= texture(u_Textures[1], Input.TexCoord * Input.TilingFactor); break;

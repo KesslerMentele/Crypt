@@ -1,4 +1,5 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
+include "Dependencies.lua"
 
 workspace "Crypt"
 	architecture "x86_64"
@@ -22,15 +23,6 @@ workspace "Crypt"
 	}
 
 	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-	IncludeDir = {}
-	IncludeDir["GLFW"] = "%{wks.location}/Crypt/vendor/GLFW/include"
-	IncludeDir["Glad"] = "%{wks.location}/Crypt/vendor/Glad/include"
-	IncludeDir["ImGui"] = "%{wks.location}/Crypt/vendor/imgui"
-	IncludeDir["glm"] = "%{wks.location}/Crypt/vendor/glm"
-	IncludeDir["entt"] = "%{wks.location}/Crypt/vendor/entt/include"
-	IncludeDir["yaml_cpp"] = "%{wks.location}/Crypt/vendor/yaml-cpp/include"
-	IncludeDir["stb_image"] = "%{wks.location}/Crypt/vendor/stb_image"
-	IncludeDir["ImGuizmo"] = "%{wks.location}/Crypt/vendor/imguizmo"
 
 	group "Dependencies"
 		include "vendor/premake"

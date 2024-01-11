@@ -9,8 +9,8 @@ namespace Crypt {
 	class CryptID : public Application
 	{
 	public:
-		CryptID()
-			: Application("CryptID")
+		CryptID(ApplicationCommandLineArgs args)
+			: Application("CryptID", args)
 		{
 			PushLayer(new CryptIDLayer());
 		}
@@ -20,8 +20,8 @@ namespace Crypt {
 		}
 	};
 
-	Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new CryptID();
+		return new CryptID(args);
 	}
 }
