@@ -2,6 +2,7 @@
 
 #include "Crypt.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 #include "Crypt/Renderer/EditorCamera.h"
 
@@ -61,5 +62,6 @@ namespace Crypt
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 }

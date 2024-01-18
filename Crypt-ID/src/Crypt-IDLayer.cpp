@@ -119,7 +119,7 @@ namespace Crypt {
 		// Render
 		Renderer2D::ResetStats();
 		m_Framebuffer->Bind();
-		RenderCommand::SetClearColor({ 0.086f, 0.086f, 0.118f, 1 });
+		RenderCommand::SetClearColor({ 0.078f, 0.067f, 0.094f, 1 });
 		RenderCommand::Clear();
 
 		// Clear EntityID attachment to -1
@@ -226,6 +226,7 @@ namespace Crypt {
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
+		m_ContentBrowserPanel.OnImGuiRender();
 
 		ImGui::Begin("Stats");
 
