@@ -128,10 +128,10 @@ namespace Crypt {
 		ImVec4 bgLight = { 0.102f, 0.106f, 0.149f, 1.0f };
 		ImVec4 header = { 0.161f, 0.18f, 0.259f, 1.0f};
 		ImVec4 headerLight = { 0.337f, 0.373f, 0.537f, 1.0f};
-		ImVec4 accent1 = { 0.467f, 0.62f, 0.941f, 1.0f};
-		ImVec4 accent2 = { 1.0f, 0.459f, 0.498f, 1.0f};		// Unused
-		ImVec4 accent3 = { 0.878f, 0.686f, 0.408f, 1.0f};	// Unused
-		ImVec4 accent4 = { 0.651f,0.871f,1.0f, 1.0f};		// Unused
+		ImVec4 accent1 = { 0.467f, 0.62f, 0.941f, 1.0f};		// Unused
+		ImVec4 accent2 = { 1.0f, 0.459f, 0.498f, 1.0f};			// Unused
+		ImVec4 accent3 = { 0.878f, 0.686f, 0.408f, 1.0f};		// Unused
+		ImVec4 accent4 = { 0.651f,0.871f,1.0f, 1.0f};		
 
 		colors[ImGuiCol_WindowBg] = bgDark;
 
