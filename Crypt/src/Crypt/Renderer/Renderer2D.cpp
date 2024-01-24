@@ -428,10 +428,8 @@ namespace Crypt {
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
-		if (src.hasTexture)
-			DrawQuad(transform, src.Tex, 1.0f, src.Color, entityID);
-		else if (src.hasSubTex)
-			DrawQuad(transform, src.SubTexture, 1.0f, src.Color, entityID);
+		if (src.Tex)
+			DrawQuad(transform, src.Tex, src.TilingFactor, src.Color, entityID);
 		else 
 			DrawQuad(transform, src.Color, entityID);
 	}

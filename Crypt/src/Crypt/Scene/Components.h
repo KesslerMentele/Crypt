@@ -90,25 +90,29 @@ namespace Crypt {
 		glm::vec4 Color{ 1.0f,1.0f,1.0f,1.0f };
 		Ref<Texture2D> Tex;
 		Ref<SubTexture2D> SubTexture;
-		bool hasSubTex = false;
-		bool hasTexture = false;
+		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+		SpriteRendererComponent(const glm::vec4& color, float tilingFactor)
+			: Color(color), TilingFactor(tilingFactor){}
 		SpriteRendererComponent(const glm::vec4& color, Ref<Texture2D>& texture)
 			:Color(color), Tex(texture) {
-			hasTexture = true;
 		}
 		SpriteRendererComponent(const glm::vec4& color, Ref<SubTexture2D>& subTexture)
 			:Color(color), SubTexture(subTexture) {
-			hasSubTex = true;
 		}
 
 		void Update(glm::vec4& color)
 		{
 			Color = color;
+		}
+		void Update(glm::vec4& color, float tilingFactor)
+		{
+			Color = color;
+			TilingFactor = tilingFactor;
 		}
 
 		operator glm::vec4& () { return Color; }

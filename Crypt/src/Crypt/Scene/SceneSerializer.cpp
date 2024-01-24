@@ -147,10 +147,9 @@ namespace Crypt {
 			auto& sprite = entity.GetComponent<SpriteRendererComponent>();
 
 			out << YAML::Key << "Color" << YAML::Value << sprite.Color;
-			out << YAML::Key << "Has Texture" << YAML::Value << sprite.hasTexture;
-			out << YAML::Key << "Texture" << YAML::Value << "Not Yet Implemented!";
-			out << YAML::Key << "Has SubTexture" << YAML::Value << sprite.hasSubTex;
-			out << YAML::Key << "SubTexture" << YAML::Value << "Not Yet Implemented!";
+			out << YAML::Key << "Texture" << YAML::Value << "Not Yet Implemented!";  // sprite.Tex;
+			out << YAML::Key << "SubTexture" << YAML::Value << "Not Yet Implemented!";  // sprite.SubTexture;
+			out << YAML::Key << "TilingFactor" << YAML::Value << "Not yet Implemented!";  // sprite.TilingFactor;
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -249,7 +248,11 @@ namespace Crypt {
 					if (spriteRendererComponent)
 					{
 						auto& sprite = deserializedEntity.AddOrUpdateComponent<SpriteRendererComponent>(spriteRendererComponent["Color"].as<glm::vec4>());
-						// TODO: Add Tex and SubTex Support
+							/* spriteRendererComponent["Texture"].as<Ref<Texture2D>>(),
+							spriteRendererComponent["SubTexture"].as<Ref<SubTexture2D>>(), */ //Not Yet Implemented!
+							//spriteRendererComponent["TilingFactor"].as<float>());
+
+							// TODO: Add Tex and SubTex Support
 					}
 
 					auto nativeScriptComponent = entity["NativeScriptComponent"];
