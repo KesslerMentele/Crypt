@@ -25,7 +25,8 @@ namespace Crypt {
 		CRY_PROFILE_FUNCTION();
 
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
-
+		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
 
 		FramebufferSpecification fbSpec;
@@ -271,7 +272,7 @@ namespace Crypt {
 		
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				OpenScene(std::filesystem::path(g_AssetPath) / path);
@@ -330,6 +331,27 @@ namespace Crypt {
 
 		ImGui::End();
 		ImGui::PopStyleVar();
+		
+		UI_Toolbar();
+
+		ImGui::End();
+	}
+
+	void CryptIDLayer::UI_Toolbar()
+	{
+		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		
+		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(20.0f, 20.0f)))
+		{
+			if (m_SceneState == SceneState::Edit)
+				OnScenePlay();
+			else if (m_SceneState == SceneState::Play)
+				OnSceneStop();
+
+		}
+
+
 		ImGui::End();
 	}
 
@@ -430,4 +452,15 @@ namespace Crypt {
 			serializer.SerializeText(filepath);
 		}
 	}
+
+	void CryptIDLayer::OnScenePlay()
+	{
+		m_SceneState = SceneState::Play;
+	}
+
+	void CryptIDLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::Edit;
+	}
+
 }
