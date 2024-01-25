@@ -115,9 +115,8 @@ namespace Crypt {
 		}
 
 		// Update
-		if (m_ViewportFocused) {}
+		
 
-		m_EditorCamera.OnUpdate(ts);
 
 		// Render
 		Renderer2D::ResetStats();
@@ -130,8 +129,18 @@ namespace Crypt {
 
 
 		// Update Scene
-		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-		
+		switch (m_SceneState)
+		{
+			case SceneState::Edit: 
+				if (m_ViewportFocused)
+					m_EditorCamera.OnUpdate(ts);
+				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+				break;
+			case SceneState::Play: 
+				m_ActiveScene->OnUpdateRuntime(ts);
+				break;
+		}
+			
 		auto[mx, my] = ImGui::GetMousePos();
 
 		mx -= m_ViewportBounds[0].x;
@@ -339,10 +348,22 @@ namespace Crypt {
 
 	void CryptIDLayer::UI_Toolbar()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		auto& colors = ImGui::GetStyle().Colors;
+		auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+		auto& buttonActive = colors[ImGuiCol_ButtonActive];
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-		
+
+		float size = ImGui::GetWindowHeight() - 4.0f;
 		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(20.0f, 20.0f)))
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0,0), ImVec2(1,1), 0))
 		{
 			if (m_SceneState == SceneState::Edit)
 				OnScenePlay();
@@ -351,7 +372,8 @@ namespace Crypt {
 
 		}
 
-
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}
 

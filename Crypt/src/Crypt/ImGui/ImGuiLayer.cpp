@@ -17,6 +17,18 @@
 
 namespace Crypt {
 
+	namespace StyleColors {
+		ImVec4 bg = { 0.078f, 0.078f, 0.106f, 1.0f };
+		ImVec4 bgDark = { 0.086f, 0.086f, 0.118f, 1.0f };
+		ImVec4 bgLight = { 0.102f, 0.106f, 0.149f, 1.0f };
+		ImVec4 header = { 0.161f, 0.18f, 0.259f, 1.0f };
+		ImVec4 headerLight = { 0.337f, 0.373f, 0.537f, 1.0f };
+		ImVec4 accent1 = { 0.467f, 0.62f, 0.941f, 1.0f };		// Unused
+		ImVec4 accent2 = { 1.0f, 0.459f, 0.498f, 1.0f };			// Unused
+		ImVec4 accent3 = { 0.878f, 0.686f, 0.408f, 1.0f };		// Unused
+		ImVec4 accent4 = { 0.651f,0.871f,1.0f, 1.0f };
+	}
+
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
@@ -123,48 +135,40 @@ namespace Crypt {
 	{
 		auto& colors = ImGui::GetStyle().Colors;
 
-		ImVec4 bg = { 0.078f, 0.078f, 0.106f, 1.0f };
-		ImVec4 bgDark = { 0.086f, 0.086f, 0.118f, 1.0f };
-		ImVec4 bgLight = { 0.102f, 0.106f, 0.149f, 1.0f };
-		ImVec4 header = { 0.161f, 0.18f, 0.259f, 1.0f};
-		ImVec4 headerLight = { 0.337f, 0.373f, 0.537f, 1.0f};
-		ImVec4 accent1 = { 0.467f, 0.62f, 0.941f, 1.0f};		// Unused
-		ImVec4 accent2 = { 1.0f, 0.459f, 0.498f, 1.0f};			// Unused
-		ImVec4 accent3 = { 0.878f, 0.686f, 0.408f, 1.0f};		// Unused
-		ImVec4 accent4 = { 0.651f,0.871f,1.0f, 1.0f};		
+		
 
-		colors[ImGuiCol_WindowBg] = bgDark;
+		colors[ImGuiCol_WindowBg] =				StyleColors::bgDark;
 
 		// Headers
-		colors[ImGuiCol_Header] = header;
-		colors[ImGuiCol_HeaderHovered] = headerLight;
-		colors[ImGuiCol_HeaderActive] = bg;
+		colors[ImGuiCol_Header] =				StyleColors::header;
+		colors[ImGuiCol_HeaderHovered] =		StyleColors::headerLight;
+		colors[ImGuiCol_HeaderActive] =			StyleColors::bg;
 
 		// Buttons
-		colors[ImGuiCol_Button] = header;
-		colors[ImGuiCol_ButtonHovered] = headerLight;
-		colors[ImGuiCol_ButtonActive] = bg;
+		colors[ImGuiCol_Button] =				StyleColors::header;
+		colors[ImGuiCol_ButtonHovered] =		StyleColors::headerLight;
+		colors[ImGuiCol_ButtonActive] =			StyleColors::bg;
 
 		// Frames
-		colors[ImGuiCol_FrameBg] = header;
-		colors[ImGuiCol_FrameBgHovered] = headerLight;
-		colors[ImGuiCol_FrameBgActive] = bg;
+		colors[ImGuiCol_FrameBg] =				StyleColors::header;
+		colors[ImGuiCol_FrameBgHovered] =		StyleColors::headerLight;
+		colors[ImGuiCol_FrameBgActive] =		StyleColors::bg;
 
 		// Tabs
-		colors[ImGuiCol_Tab] = bg;
-		colors[ImGuiCol_TabHovered] = bgLight;
-		colors[ImGuiCol_TabActive] = headerLight;
-		colors[ImGuiCol_TabUnfocused] = bg;
-		colors[ImGuiCol_TabUnfocusedActive] = header;
+		colors[ImGuiCol_Tab] =					StyleColors::bg;
+		colors[ImGuiCol_TabHovered] =			StyleColors::bgLight;
+		colors[ImGuiCol_TabActive] =			StyleColors::headerLight;
+		colors[ImGuiCol_TabUnfocused] =			StyleColors::bg;
+		colors[ImGuiCol_TabUnfocusedActive] =	StyleColors::header;
 
 		// Title
-		colors[ImGuiCol_TitleBg] = bg;
-		colors[ImGuiCol_TitleBgActive] = bg;
-		colors[ImGuiCol_TitleBgCollapsed] = headerLight;
+		colors[ImGuiCol_TitleBg] =				StyleColors::bg;
+		colors[ImGuiCol_TitleBgActive] =		StyleColors::bg;
+		colors[ImGuiCol_TitleBgCollapsed] =		StyleColors::headerLight;
 
-		colors[ImGuiCol_Text] = accent4;
+		colors[ImGuiCol_Text] =					StyleColors::accent4;
 	}
-
-
+	
+	
 
 }
