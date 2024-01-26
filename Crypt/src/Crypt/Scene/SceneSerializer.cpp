@@ -12,6 +12,29 @@
 
 namespace YAML
 {
+
+	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
+
 	template<>
 	struct convert<glm::vec3>
 	{
@@ -68,6 +91,13 @@ namespace YAML
 
 namespace Crypt {
 
+	YAML::Emitter& operator<<(YAML::Emitter & out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+		return out;
+	}
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
 		out << YAML::Flow;
@@ -90,8 +120,9 @@ namespace Crypt {
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		CRY_CORE_ASSERT(entity.HasComponent<IDComponent>());
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << "245982924"; // Entity ID
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID; // Entity UUID goes here
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -164,6 +195,35 @@ namespace Crypt {
 			out << YAML::EndMap; // NativeScriptComponent
 		}
 
+		if (entity.HasComponent<RigidBody2DComponent>())
+		{
+			out << YAML::Key << "RigidBody2DComponent";
+			out << YAML::BeginMap; // RigidBody2DComponent
+			auto& body = entity.GetComponent<RigidBody2DComponent>();
+
+			out << YAML::Key << "Type" << YAML::Value << (int)body.Type;
+			out << YAML::Key << "FixedRotation" << YAML::Value << body.FixedRotation;
+
+			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+
+		if (entity.HasComponent<BoxCollider2DComponent>())
+		{
+			out << YAML::Key << "BoxCollider2DComponent";
+			out << YAML::BeginMap; // BoxCollider2DComponent
+			auto& box = entity.GetComponent<BoxCollider2DComponent>();
+
+			out << YAML::Key << "Offset" << YAML::Value << box.Offset;
+			out << YAML::Key << "Size" << YAML::Value << box.Size;
+			out << YAML::Key << "Density" << YAML::Value << box.Density;  
+			out << YAML::Key << "Friction" << YAML::Value <<box.Friction;  
+			out << YAML::Key << "Restitution" << YAML::Value << box.Restitution;  
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << box.RestitutionThreshold; 
+
+			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -174,13 +234,14 @@ namespace Crypt {
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		
-		m_Scene->m_Registry.each([&](auto entityID)
-			{
-				Entity entity = { entityID, m_Scene.get() };
-				if (!entity)
-					return;
-				SerializeEntity(out, entity);
-			});
+		for (const auto& [entityID, component] : m_Scene->m_Registry.storage<TagComponent>().each())
+		{
+			Entity entity = { entityID, m_Scene.get() };
+			if (!entity)
+				return;
+			SerializeEntity(out, entity);
+		}
+
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
@@ -199,18 +260,31 @@ namespace Crypt {
 	{
 		if (!filepath.empty())
 		{
-			YAML::Node data = YAML::LoadFile(filepath);
+			YAML::Node data;
+
+			try
+			{
+				data = YAML::LoadFile(filepath);
+			}
+			catch (YAML::ParserException e)
+			{
+				return false;
+			}
+			
+			
 			if (!data["Scene"])
 				return false;
 			std::string sceneName = data["Scene"].as<std::string>();
 			CRY_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 
+
+			m_Scene->SetPath(filepath);
 			auto entities = data["Entities"];
 			if (entities)
 			{
 				for (auto entity : entities)
 				{
-					uint64_t uuid = entity["Entity"].as<uint64_t>();
+					uint64_t uuid = entity["Entity"].as<uint64_t>(); //TODO
 					std::string name;
 					auto tagComponent = entity["TagComponent"];
 					if (tagComponent)
@@ -260,6 +334,24 @@ namespace Crypt {
 					if (nativeScriptComponent)
 					{
 						//TODO: Make this work
+					}
+
+					auto rigidBody2DComponent = entity["RigidBody2DComponent"];
+					if (rigidBody2DComponent)
+					{
+						auto& tc = deserializedEntity.AddOrUpdateComponent<RigidBody2DComponent>((RigidBody2DComponent::BodyType)rigidBody2DComponent["Type"].as<int>(),
+							rigidBody2DComponent["FixedRotation"].as<bool>());
+					}
+
+					auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
+					if (boxCollider2DComponent)
+					{
+						auto& tc = deserializedEntity.AddOrUpdateComponent<BoxCollider2DComponent>(boxCollider2DComponent["Offset"].as<glm::vec2>(),
+							boxCollider2DComponent["Size"].as<glm::vec2>(),
+							boxCollider2DComponent["Density"].as<float>(),
+							boxCollider2DComponent["Friction"].as<float>(),
+							boxCollider2DComponent["Restitution"].as<float>(),
+							boxCollider2DComponent["RestitutionThreshold"].as<float>());
 					}
 
 				}

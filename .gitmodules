@@ -20,3 +20,6 @@
 [submodule "Crypt/vendor/imguizmo"]
 	path = Crypt/vendor/imguizmo
 	url = https://github.com/thecherno/imguizmo
+[submodule "Crypt/vendor/Box2D"]
+	path = Crypt/vendor/Box2D
+	url = https://github.com/KesslerMentele/box2d

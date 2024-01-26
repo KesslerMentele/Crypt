@@ -1,5 +1,5 @@
 #pragma once
-
+#define _SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS
 #include "Crypt.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
@@ -29,6 +29,7 @@ namespace Crypt
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
 		void SaveSceneAs();
 
 		void OnScenePlay();

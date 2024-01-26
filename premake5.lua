@@ -26,6 +26,7 @@ workspace "Crypt"
 
 	group "Dependencies"
 		include "vendor/premake"
+		include "Crypt/vendor/Box2D"
 		include "Crypt/vendor/GLFW"
 		include "Crypt/vendor/Glad"
 		include "Crypt/vendor/imgui"

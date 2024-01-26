@@ -1,0 +1,64 @@
+Scene: Untitled
+Entities:
+  - Entity: 245982924
+    TagComponent:
+      Tag: Ground
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [14.1999998, 1, 0]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Texture: Not Yet Implemented!
+      SubTexture: Not Yet Implemented!
+      TilingFactor: Not yet Implemented!
+    RigidBody2DComponent:
+      Type: 0
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 245982924
+    TagComponent:
+      Tag: Camera A
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        Ortho Size: 10
+        Ortho FarClip: 1
+        Ortho NearClip: -1
+        Perspective VerticalFOV: 0.785398185
+        Perspective FarClip: 1000
+        Perspective NearClip: 0.00999999978
+      Primary: true
+      FixedAspectRatio: false
+    TransformComponent:
+      Translation: [0, 4.0999999, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+  - Entity: 245982924
+    TagComponent:
+      Tag: Bouncing
+    TransformComponent:
+      Translation: [0, 4.80999994, 0]
+      Rotation: [0, 0, 0.192335293]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 1, 0, 1]
+      Texture: Not Yet Implemented!
+      SubTexture: Not Yet Implemented!
+      TilingFactor: Not yet Implemented!
+    RigidBody2DComponent:
+      Type: 1
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.589999974
+      RestitutionThreshold: 0.5

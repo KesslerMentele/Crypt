@@ -11,22 +11,21 @@ It inherits the Apache License 2.0 from the original Hazel engine, adhering to i
 ***
 - Better Batch Renderer
 - Texture Atlas
-- Shaders
+- Shader Specification
 - Post FX
 
 ## Scripting
 ***
 - Visual Scripting system?? 
 Language for scripting: C#
-
-This allows us to better interact with the ECS in our scripts.
+    - This allows you to better interact with the ECS in scripts.
  
 ## Physics (Box2D)
 ***
-- Collision
+- Collision (Doneish)
 - Scripting Integration
 - Callbacks
-- Gravity
+- Gravity (Doneish)
 
 ## Particle System
 ***
@@ -39,6 +38,10 @@ This allows us to better interact with the ECS in our scripts.
 - Undo/Redo System
 - A lot more tools
 - A lot lot more
+- Camera Picture in Picture
+- Clickable Camera Icon in Game Space
+- Reset Scene on Scene stop
+- Serialize to Binary
 
 ## User Interface
 ***
@@ -53,7 +56,7 @@ This allows us to better interact with the ECS in our scripts.
 
 ## Runtime
 ***
-- Play/Pause Scenes
+- Play/Pause Scenes (Doneish)
 - Standalone Player
 - Play in Editor
 - Serialization in Runtime

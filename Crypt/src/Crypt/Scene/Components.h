@@ -1,22 +1,34 @@
 #pragma once
 
+#include "Crypt/Core/UUID.h"
 #include "Crypt/Renderer/Texture.h"
 #include "Crypt/Renderer/SubTexture2D.h"
-#include "SceneCamera.h"
-#include "ScriptableEntity.h"
-#include <glm/glm.hpp>
-
+#include "Crypt/Scene/SceneCamera.h"
+#include "Crypt/Scene/ScriptableEntity.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-
-
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <optional>
 
+#include <optional>
 
 namespace Crypt {
 	
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+
+		void Update(const UUID& uuid)
+		{
+			ID = uuid;
+		}
+
+	};
+
 	struct TagComponent
 	{
 		std::string Tag;
@@ -138,5 +150,52 @@ namespace Crypt {
 		}
 	};
 
+	// Physics
 
+	struct RigidBody2DComponent
+	{
+		enum class BodyType {Static = 0, Dynamic, Kinematic};
+		BodyType Type = BodyType::Static;
+		bool FixedRotation = false;
+		
+		void Update(BodyType type, bool rotation)
+		{
+			Type = type;
+			FixedRotation = rotation;
+		}
+
+		// Storage for runtime
+		void* RuntimeBody = nullptr;
+
+		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const RigidBody2DComponent&) = default;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		// TODO: Move into physics material eventually
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		void Update(glm::vec2 offset, glm::vec2 size, float density, float friction, float restitution, float restitutionThreshold)
+		{
+			Offset = offset;
+			Size = size;
+			Density = density;
+			Friction = friction;
+			Restitution = restitution;
+			RestitutionThreshold = restitutionThreshold;
+		}
+
+		// Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+	};
 }

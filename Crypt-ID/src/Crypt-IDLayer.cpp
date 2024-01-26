@@ -1,16 +1,16 @@
 #include "Crypt-IDLayer.h"
-#include "imgui/imgui.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "Crypt/Scene/SceneSerializer.h"
-
 #include "Crypt/Utils/PlatformUtils.h"
+#include "Crypt/Math/Math.h"
 
+#include "imgui/imgui.h"
 #include "imguizmo/ImGuizmo.h"
 
-#include "Crypt/Math/Math.h"
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 namespace Crypt {
 
@@ -227,6 +227,9 @@ namespace Crypt {
 				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 					OpenScene();
 
+				if (ImGui::MenuItem("Save...", "Ctrl+S"))
+					SaveScene();
+
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 					SaveSceneAs();
 
@@ -399,6 +402,8 @@ namespace Crypt {
 		{
 			if (control && shift)
 				SaveSceneAs();
+			else if (control)
+				SaveScene();
 			break;
 		}
 		case Key::O:
@@ -432,6 +437,7 @@ namespace Crypt {
 
 		return false;
 	}
+
 	bool CryptIDLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		bool alt = Input::IsKeyPressed(Key::LeftAlt) || Input::IsKeyPressed(Key::RightAlt);
@@ -443,12 +449,14 @@ namespace Crypt {
 
 		return false;
 	}
+
 	void CryptIDLayer::NewScene()
 	{
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
+
 	void CryptIDLayer::OpenScene()
 	{
 		std::string filepath = FileDialogs::OpenFile("Crypt Scene (*.crypt)\0*.crypt\0");
@@ -458,13 +466,40 @@ namespace Crypt {
 			OpenScene(filepath);
 		}
 	}
+
 	void CryptIDLayer::OpenScene(const std::filesystem::path& path)
 	{
-		NewScene();
-
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.DeserializeText(path.string());
+		if (path.extension().string() != ".crypt")
+		{
+			CRY_WARN("Could not load {0} - not a scene file", path.filename().string());
+			return;
+		}
+		
+		Ref<Scene> newScene = CreateRef<Scene>(path);
+		SceneSerializer serializer(newScene);
+		if (serializer.DeserializeText(path.string()))
+		{
+			m_ActiveScene = newScene;
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		};
 	}
+
+	void CryptIDLayer::SaveScene()
+	{
+		std::string filepath = m_ActiveScene->GetPath().string();
+		if (!filepath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.SerializeText(filepath);
+			CRY_INFO("Scene saved to {0}", filepath);
+		}
+		else
+		{
+			SaveSceneAs();
+		}
+	}
+
 	void CryptIDLayer::SaveSceneAs()
 	{
 		std::string filepath = FileDialogs::SaveFile("Crypt Scene (*.crypt)\0*.crypt\0");
@@ -472,16 +507,19 @@ namespace Crypt {
 		{
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.SerializeText(filepath);
+			CRY_INFO("Scene saved as {0}", filepath);
 		}
 	}
 
 	void CryptIDLayer::OnScenePlay()
 	{
+		m_ActiveScene->OnRuntimeStart();
 		m_SceneState = SceneState::Play;
 	}
 
 	void CryptIDLayer::OnSceneStop()
 	{
+		m_ActiveScene->OnRuntimeStop();
 		m_SceneState = SceneState::Edit;
 	}
 

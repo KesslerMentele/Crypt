@@ -1,8 +1,9 @@
 #pragma once
 
-#include <glm/gtx/string_cast.hpp>
-
 #include "Crypt/Core/Core.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 #pragma warning(push, 0)
 #include <spdlog/spdlog.h>
@@ -40,9 +41,9 @@ inline OStream& operator<<(OStream& os, const glm::mat<C, R, T, Q>& matrix)
 }
 
 template<typename OStream, typename T, glm::qualifier Q>
-inline OStream& operator<<(OStream& os, const glm::qua<T, Q> quaternio)
+inline OStream& operator<<(OStream& os, const glm::qua<T, Q> quaternion)
 {
-	return os << glm::to_string(quaternio);
+	return os << glm::to_string(quaternion);
 }
 
 // Core log macros
