@@ -27,24 +27,26 @@ namespace Crypt {
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		for( auto& [entityID, tag ]: m_Context->m_Registry.storage<TagComponent>().each())
+		if (m_Context)
 		{
-			Entity entity{ entityID, m_Context.get() };
-			DrawEntityNode(entity);
-		};
-
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectionContext = {};
-		
-		if (ImGui::BeginPopupContextWindow(0, 1, false))
-		{
-			if (ImGui::MenuItem("Create Empty Entity"))
+			for (auto& [entityID, tag] : m_Context->m_Registry.storage<TagComponent>().each())
 			{
-				m_Context->CreateEntity("Empty Entity");
-			}
-			ImGui::EndPopup();
-		}
+				Entity entity{ entityID, m_Context.get() };
+				DrawEntityNode(entity);
+			};
 
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_SelectionContext = {};
+
+			if (ImGui::BeginPopupContextWindow(0, 1, false))
+			{
+				if (ImGui::MenuItem("Create Empty Entity"))
+				{
+					m_Context->CreateEntity("Empty Entity");
+				}
+				ImGui::EndPopup();
+			}
+		}
 		ImGui::End();
 
 		ImGui::Begin("Properties");

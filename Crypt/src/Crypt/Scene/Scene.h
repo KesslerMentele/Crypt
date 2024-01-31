@@ -2,6 +2,7 @@
 
 #include "Crypt/Core/Timestep.h"
 #include "Crypt/Renderer/EditorCamera.h"
+#include "Crypt/Core/UUID.h"
 
 #include <entt.hpp>
 #include <filesystem>
@@ -24,7 +25,12 @@ namespace Crypt {
 
 		~Scene(); 
 
+		static Ref<Scene> Copy(Ref<Scene> other);
+		
 		Entity CreateEntity(const std::string& name = std::string());
+		
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name);
+		
 		void DestoryEntity(Entity entity);
 
 		void OnRuntimeStart();
@@ -37,6 +43,7 @@ namespace Crypt {
 		std::filesystem::path GetPath() { return m_ScenePath; }
 		void SetPath(const std::filesystem::path& path) { m_ScenePath = path; }
 
+		void DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
 

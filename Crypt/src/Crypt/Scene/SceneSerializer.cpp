@@ -122,7 +122,7 @@ namespace Crypt {
 	{
 		CRY_CORE_ASSERT(entity.HasComponent<IDComponent>());
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID; // Entity UUID goes here
+		out << YAML::Key << "Entity" << YAML::Value << entity.GetComponent<IDComponent>().ID;
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -284,7 +284,7 @@ namespace Crypt {
 			{
 				for (auto entity : entities)
 				{
-					uint64_t uuid = entity["Entity"].as<uint64_t>(); //TODO
+					uint64_t uuid = entity["Entity"].as<uint64_t>();
 					std::string name;
 					auto tagComponent = entity["TagComponent"];
 					if (tagComponent)
@@ -294,7 +294,7 @@ namespace Crypt {
 
 					CRY_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-					Entity deserializedEntity = m_Scene->CreateEntity(name);
+					Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
 					auto cameraComponent = entity["CameraComponent"];
 					if (cameraComponent)

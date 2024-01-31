@@ -35,6 +35,8 @@ namespace Crypt
 		void OnScenePlay();
 		void OnSceneStop();
 
+		void OnDuplicateEntity();
+
 		// UI Panels
 		void UI_Toolbar();
 
@@ -49,6 +51,7 @@ namespace Crypt
 		// ---------------
 
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
 		Entity m_SecondCamera;
 		Entity m_CameraEntity;
 		Entity m_HoveredEntity;

@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 245982924
+  - Entity: 54977758685747334
     TagComponent:
       Tag: Back 1
     TransformComponent:
@@ -9,11 +9,10 @@ Entities:
       Scale: [0.999999702, 1, 0.999999702]
     SpriteRendererComponent:
       Color: [0.909803927, 0, 0, 1]
-      Has Texture: false
       Texture: Not Yet Implemented!
-      Has SubTexture: false
       SubTexture: Not Yet Implemented!
-  - Entity: 245982924
+      TilingFactor: Not yet Implemented!
+  - Entity: 1545341113201992380
     TagComponent:
       Tag: Camera A
     CameraComponent:
@@ -31,7 +30,7 @@ Entities:
       Translation: [0, 1.60000002, 4.80000019]
       Rotation: [-0.314159274, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 245982924
+  - Entity: 4708534956749858234
     TagComponent:
       Tag: Left
     TransformComponent:
@@ -40,11 +39,10 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
-      Has Texture: false
       Texture: Not Yet Implemented!
-      Has SubTexture: false
       SubTexture: Not Yet Implemented!
-  - Entity: 245982924
+      TilingFactor: Not yet Implemented!
+  - Entity: 10820309894309205941
     TagComponent:
       Tag: Right
     TransformComponent:
@@ -53,11 +51,10 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.70588237, 0, 0, 1]
-      Has Texture: false
       Texture: Not Yet Implemented!
-      Has SubTexture: false
       SubTexture: Not Yet Implemented!
-  - Entity: 245982924
+      TilingFactor: Not yet Implemented!
+  - Entity: 10711406743049186939
     TagComponent:
       Tag: Top
     TransformComponent:
@@ -66,11 +63,10 @@ Entities:
       Scale: [0.999999881, 0.999951243, 0.999972999]
     SpriteRendererComponent:
       Color: [0.909803927, 0, 0, 1]
-      Has Texture: false
       Texture: Not Yet Implemented!
-      Has SubTexture: false
       SubTexture: Not Yet Implemented!
-  - Entity: 245982924
+      TilingFactor: Not yet Implemented!
+  - Entity: 6223595579653549070
     TagComponent:
       Tag: Bottom
     TransformComponent:
@@ -79,7 +75,6 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.909803927, 0, 0, 1]
-      Has Texture: false
       Texture: Not Yet Implemented!
-      Has SubTexture: false
       SubTexture: Not Yet Implemented!
+      TilingFactor: Not yet Implemented!

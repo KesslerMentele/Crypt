@@ -2,6 +2,8 @@
 #include "Scene.h"
 
 #include "Components.h"
+#include "ScriptableEntity.h"
+#include "Crypt/Core/UUID.h"
 #include "Crypt/Renderer/Renderer2D.h"
 
 #include "Entity.h"
@@ -35,16 +37,78 @@ namespace Crypt {
 
 	Scene::~Scene()
 	{
+
+	}
+
+	template<typename C>
+	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& map)
+	{
+		auto view = src.view<C>();
+		for (auto e : view)
+		{
+			UUID id = src.get<IDComponent>(e).ID;
+			CRY_CORE_ASSERT(map.find(id) != map.end());
+			entt::entity enttID = map.at(id);
+			
+			auto& component = src.get<C>(e);
+			dst.emplace_or_replace<C>(enttID, component);
+		}
+	};
+
+	template<typename C> 
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<C>())
+			dst.AddOrReplaceComponent<C>(src.GetComponent<C>());
 		
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> src)
+	{
+		Ref<Scene> dst = CreateRef<Scene>();
+		
+		dst->m_ViewportWidth = src->m_ViewportWidth;
+		dst->m_ViewportHeight = src->m_ViewportHeight;
+
+
+		auto& srcSceneRegistry = src->m_Registry;
+		auto& dstSceneRegistry = dst->m_Registry;
+		std::unordered_map<UUID, entt::entity> enttMap;
+		
+
+		// Create new entities
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		for (auto e : idView)
+		{
+			UUID id = srcSceneRegistry.get<IDComponent>(e).ID;
+			const auto& name = srcSceneRegistry.get<TagComponent>(e).Tag;
+			Entity newEntity = dst->CreateEntityWithUUID(id, name);
+			enttMap[id] = newEntity;
+		}
+
+		// Copy Components to new entities
+		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<RigidBody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		return dst;
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+	{
 		Entity entity = { m_Registry.create(), this };
-		entity.AddComponent<IDComponent>();
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>(name);
-		
+
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		return entity;
@@ -146,7 +210,7 @@ namespace Crypt {
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
-			auto view = m_Registry.view<CameraComponent, TransformComponent>();
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
 			{
 				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
@@ -208,6 +272,20 @@ namespace Crypt {
 
 	}
 
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		std::string name = entity.GetName();
+		Entity newEntity = CreateEntity(name);
+
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+
+	}
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -228,6 +306,11 @@ namespace Crypt {
 
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
 	}
 

@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 245982924
+  - Entity: 41856457276395631
     TagComponent:
       Tag: Camera B
     CameraComponent:
@@ -18,7 +18,7 @@ Entities:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 245982924
+  - Entity: 16284326883235534487
     TagComponent:
       Tag: Camera A
     CameraComponent:
@@ -36,7 +36,7 @@ Entities:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-  - Entity: 245982924
+  - Entity: 185967054010361653
     TagComponent:
       Tag: Red Barrel
     TransformComponent:
@@ -48,7 +48,7 @@ Entities:
       Texture: Not Yet Implemented!
       SubTexture: Not Yet Implemented!
       TilingFactor: Not yet Implemented!
-  - Entity: 245982924
+  - Entity: 7303369143984585696
     TagComponent:
       Tag: Green Barrel
     TransformComponent:

@@ -4,7 +4,6 @@
 #include "Crypt/Renderer/Texture.h"
 #include "Crypt/Renderer/SubTexture2D.h"
 #include "Crypt/Scene/SceneCamera.h"
-#include "Crypt/Scene/ScriptableEntity.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -131,6 +130,8 @@ namespace Crypt {
 		operator const glm::vec4& () const { return Color; }
 	};
 
+	// Forward declaration
+	class ScriptableEntity;
 
 	struct NativeScriptComponent
 	{

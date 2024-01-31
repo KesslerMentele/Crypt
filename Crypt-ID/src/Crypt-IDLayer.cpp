@@ -223,7 +223,6 @@ namespace Crypt {
 				if (ImGui::MenuItem("New", "Ctrl+N"))
 					NewScene();
 
-
 				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 					OpenScene();
 
@@ -398,26 +397,21 @@ namespace Crypt {
 
 		switch (e.GetKeyCode())
 		{
+			// Save and Load
 		case Key::S:
-		{
 			if (control && shift)
 				SaveSceneAs();
 			else if (control)
 				SaveScene();
 			break;
-		}
 		case Key::O:
-		{
 			if (control)
 				OpenScene();
 			break;
-		}
 		case Key::N:
-		{
 			if (control)
 				NewScene();
 			break;
-		}
 
 		// Gizmos
 		case Key::Q:
@@ -433,8 +427,14 @@ namespace Crypt {
 			m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 			break;
 
-		}
+		// In-Editor Functions
+		case Key::D:
+			if (control)
+				OnDuplicateEntity();
+			break;
 
+		
+		}
 		return false;
 	}
 
@@ -469,6 +469,11 @@ namespace Crypt {
 
 	void CryptIDLayer::OpenScene(const std::filesystem::path& path)
 	{
+		if (m_SceneState != SceneState::Edit)
+		{
+			OnSceneStop();
+		}
+
 		if (path.extension().string() != ".crypt")
 		{
 			CRY_WARN("Could not load {0} - not a scene file", path.filename().string());
@@ -479,9 +484,11 @@ namespace Crypt {
 		SceneSerializer serializer(newScene);
 		if (serializer.DeserializeText(path.string()))
 		{
-			m_ActiveScene = newScene;
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_EditorScene = newScene;
+			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_EditorScene);
+			
+			m_ActiveScene = m_EditorScene;
 		};
 	}
 
@@ -513,14 +520,28 @@ namespace Crypt {
 
 	void CryptIDLayer::OnScenePlay()
 	{
-		m_ActiveScene->OnRuntimeStart();
 		m_SceneState = SceneState::Play;
+		m_ActiveScene = Scene::Copy(m_EditorScene); 
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_ActiveScene->OnRuntimeStart();
 	}
 
 	void CryptIDLayer::OnSceneStop()
 	{
-		m_ActiveScene->OnRuntimeStop();
 		m_SceneState = SceneState::Edit;
+		m_ActiveScene->OnRuntimeStop();
+		m_SceneHierarchyPanel.SetContext(m_EditorScene);
+		m_ActiveScene = m_EditorScene;
+	}
+
+	void CryptIDLayer::OnDuplicateEntity()
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity)
+			m_EditorScene->DuplicateEntity(selectedEntity);
 	}
 
 }
