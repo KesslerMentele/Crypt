@@ -15,6 +15,7 @@
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
 
 namespace Crypt {
 
@@ -93,6 +94,7 @@ namespace Crypt {
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<RigidBody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return dst;
 	}
@@ -155,6 +157,23 @@ namespace Crypt {
 				body->CreateFixture(&fixtureDef);
 
 			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_radius = cc2d.Radius;
+
+				b2FixtureDef circleDef;
+				circleDef.shape = &circleShape;
+				circleDef.density = cc2d.Density;
+				circleDef.friction = cc2d.Friction;
+				circleDef.restitution = cc2d.Restitution;
+				circleDef.restitutionThreshold = cc2d.RestitutionThreshold;
+				body->CreateFixture(&circleDef);
+			}
+
 
 		}
 	}
@@ -283,6 +302,7 @@ namespace Crypt {
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 
 	}
 
@@ -343,6 +363,11 @@ namespace Crypt {
 	
 	template<>
 		void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
 	}
 }

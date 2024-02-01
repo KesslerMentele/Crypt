@@ -57,6 +57,10 @@ namespace Crypt {
 		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angleInDegrees, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angleInDegrees, const Ref<SubTexture2D>& subtexture, float tilingfactor = 1.0f, glm::vec4& tintcolor = glm::vec4(1.0f));
 
+		// Draws Solid Circles
+		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f, int entityID = -1);
+
+		// Chooses Textured or Solid DrawQuad
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
 
 		// Stats

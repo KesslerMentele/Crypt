@@ -223,6 +223,21 @@ namespace Crypt {
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
+		
+		if (entity.HasComponent<CircleCollider2DComponent>())
+		{
+			out << YAML::Key << "CircleCollider2DComponent";
+			out << YAML::BeginMap; // CircleCollider2DComponent
+			auto& box = entity.GetComponent<CircleCollider2DComponent>();
+
+			out << YAML::Key << "Radius" << YAML::Value << box.Radius;
+			out << YAML::Key << "Density" << YAML::Value << box.Density;  
+			out << YAML::Key << "Friction" << YAML::Value <<box.Friction;  
+			out << YAML::Key << "Restitution" << YAML::Value << box.Restitution;  
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << box.RestitutionThreshold; 
+
+			out << YAML::EndMap; // SpriteRendererComponent
+		}
 
 		out << YAML::EndMap; // Entity
 	}
@@ -348,6 +363,16 @@ namespace Crypt {
 					{
 						auto& tc = deserializedEntity.AddOrUpdateComponent<BoxCollider2DComponent>(boxCollider2DComponent["Offset"].as<glm::vec2>(),
 							boxCollider2DComponent["Size"].as<glm::vec2>(),
+							boxCollider2DComponent["Density"].as<float>(),
+							boxCollider2DComponent["Friction"].as<float>(),
+							boxCollider2DComponent["Restitution"].as<float>(),
+							boxCollider2DComponent["RestitutionThreshold"].as<float>());
+					}
+					
+					auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
+					if (circleCollider2DComponent)
+					{
+						auto& tc = deserializedEntity.AddOrUpdateComponent<CircleCollider2DComponent>(circleCollider2DComponent["Radius"].as<float>(),
 							boxCollider2DComponent["Density"].as<float>(),
 							boxCollider2DComponent["Friction"].as<float>(),
 							boxCollider2DComponent["Restitution"].as<float>(),

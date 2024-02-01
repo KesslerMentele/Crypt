@@ -5,8 +5,14 @@
 #include <imgui/imgui.h>
 #include<imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <cstring>
 #include <filesystem>
 
+
+#ifdef _MSCV_LANG
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 namespace Crypt {
 
@@ -68,7 +74,7 @@ namespace Crypt {
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
@@ -84,7 +90,7 @@ namespace Crypt {
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)((uint32_t)entity + 1000), flags, tag.c_str());
 			if (opened)
 				ImGui::TreePop();
@@ -109,6 +115,7 @@ namespace Crypt {
 		ImGui::SetColumnWidth(0, columnWidth);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
+
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 
@@ -124,45 +131,39 @@ namespace Crypt {
 		if (ImGui::Button("X", buttonSize))
 			values.x = resetValue;
 		ImGui::PopFont();
-
+		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
 		ImGui::DragFloat("##X", &values.x, step, 0.0f, 0.0f, "%.2f");
-		
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		ImGui::PopStyleColor(3);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.3f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
-		
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Y", buttonSize))
 			values.y = resetValue;
 		ImGui::PopFont();
-
+		ImGui::PopStyleColor(3);
+		
 		ImGui::SameLine();
 		ImGui::DragFloat("##Y", &values.y, step, 0.0f, 0.0f, "%.2f");
-		
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		ImGui::PopStyleColor(3);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.35f, 0.9f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
-		
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Z", buttonSize))
 			values.z = resetValue;
 		ImGui::PopFont();
-
+		ImGui::PopStyleColor(3);
+		
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &values.z, step, 0.0f, 0.0f, "%.2f");
-		
 		ImGui::PopItemWidth();
-		ImGui::PopStyleColor(3);
 
 		ImGui::PopStyleVar();
 		ImGui::Columns(1);
@@ -221,7 +222,7 @@ namespace Crypt {
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer))) 
 			{
 				tag = std::string(buffer);
@@ -254,6 +255,15 @@ namespace Crypt {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
+			{
+				if (ImGui::MenuItem("CircleRenderer"))
+				{
+					m_SelectionContext.AddComponent<CircleRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			if (!m_SelectionContext.HasComponent<NativeScriptComponent>())
 			{
 				if (ImGui::MenuItem("Script"))
@@ -281,8 +291,19 @@ namespace Crypt {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
+			{
+				if (ImGui::MenuItem("Circle Collider 2D"))
+				{
+					m_SelectionContext.AddComponent<CircleCollider2DComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			ImGui::EndPopup();
 		}
+
+		ImGui::PopItemWidth();
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component) 
 		{
@@ -381,10 +402,23 @@ namespace Crypt {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("Clear", ImVec2(100.0f, 0.0f)))
+			{
+				component.Tex = nullptr;
+			}
 
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 		
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+		{
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+			ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
+			ImGui::DragFloat("Fade", &component.Fade, 0.00025f , 0.0f, 1.0f);
+
+		});
+
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2D", entity, [](auto& component)
 		{
 			const char* BodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
@@ -417,6 +451,15 @@ namespace Crypt {
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 		});
+
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
+			{
+				ImGui::DragFloat("Radius", &component.Radius, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+			});
 
 	}
 

@@ -130,6 +130,27 @@ namespace Crypt {
 		operator const glm::vec4& () const { return Color; }
 	};
 
+	struct CircleRendererComponent
+	{
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float Thickness = 1.0f;
+		float Fade = 0.005f;
+
+
+		void Update(glm::vec4& color, float thickness, float fade)
+		{
+			Color = color;
+			Thickness = thickness;
+			Fade = fade;
+		}
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+		CircleRendererComponent(const glm::vec4& color)
+			: Color(color) {}
+	};
+
+
 	// Forward declaration
 	class ScriptableEntity;
 
@@ -199,4 +220,30 @@ namespace Crypt {
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
+
+	struct CircleCollider2DComponent
+	{
+		// TODO: Move into physics material eventually
+		float Radius = 0.5f;
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		void Update(float radius, float density, float friction, float restitution, float restitutionThreshold)
+		{
+			Radius = radius;
+			Density = density;
+			Friction = friction;
+			Restitution = restitution;
+			RestitutionThreshold = restitutionThreshold;
+		}
+
+		// Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+	};
+
 }
