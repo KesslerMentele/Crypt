@@ -8,7 +8,6 @@ namespace Crypt {
 	{
 	public:
 		OpenGLVertexArray();
-		
 		virtual ~OpenGLVertexArray();
 
 		virtual void Bind() const override;

@@ -6,6 +6,7 @@
 namespace Crypt {
 
 	static const uint32_t s_MaxFrameBufferSize = 8192;
+
 	namespace Utils {
 
 		static GLenum TextureTarget(bool multisampled)
@@ -84,11 +85,13 @@ namespace Crypt {
 			case FramebufferTextureFormat::RGBA8:		return GL_RGBA8;
 			case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			}
+
 			CRY_CORE_ASSERT(false);
 			return 0;
 		}
 
 	}
+
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
 		: m_Specification(spec)
 	{

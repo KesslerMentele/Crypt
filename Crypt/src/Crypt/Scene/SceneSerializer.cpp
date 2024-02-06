@@ -185,6 +185,20 @@ namespace Crypt {
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<CircleRendererComponent>())
+		{
+			out << YAML::Key << "CircleRendererComponent";
+			out << YAML::BeginMap; // CircleRendererComponent
+			auto& circle = entity.GetComponent<CircleRendererComponent>();
+
+			out << YAML::Key << "Color" << YAML::Value << circle.Color;
+			out << YAML::Key << "Thickness" << YAML::Value << circle.Thickness;
+			out << YAML::Key << "Fade" << YAML::Value << circle.Fade;
+
+
+			out << YAML::EndMap; // CircleRendererComponent
+		}
+
 		if (entity.HasComponent<NativeScriptComponent>())
 		{
 			out << YAML::Key << "NativeScriptComponent";
@@ -345,6 +359,16 @@ namespace Crypt {
 							// TODO: Add Tex and SubTex Support
 					}
 
+					auto circleRendererComponent = entity["CircleRendererComponent"];
+					if (circleRendererComponent)
+					{
+
+						auto& crc = deserializedEntity.AddOrUpdateComponent<CircleRendererComponent>(circleRendererComponent["Color"].as<glm::vec4>(),
+							circleRendererComponent["Thickness"].as<float>(),
+							circleRendererComponent["Fade"].as<float>());
+						
+					}
+
 					auto nativeScriptComponent = entity["NativeScriptComponent"];
 					if (nativeScriptComponent)
 					{
@@ -373,10 +397,10 @@ namespace Crypt {
 					if (circleCollider2DComponent)
 					{
 						auto& tc = deserializedEntity.AddOrUpdateComponent<CircleCollider2DComponent>(circleCollider2DComponent["Radius"].as<float>(),
-							boxCollider2DComponent["Density"].as<float>(),
-							boxCollider2DComponent["Friction"].as<float>(),
-							boxCollider2DComponent["Restitution"].as<float>(),
-							boxCollider2DComponent["RestitutionThreshold"].as<float>());
+							circleCollider2DComponent["Density"].as<float>(),
+							circleCollider2DComponent["Friction"].as<float>(),
+							circleCollider2DComponent["Restitution"].as<float>(),
+							circleCollider2DComponent["RestitutionThreshold"].as<float>());
 					}
 
 				}

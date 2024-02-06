@@ -5,8 +5,34 @@
 
 namespace Crypt {
 
+	void OpenGLMessageCallback(
+		unsigned source,
+		unsigned type,
+		unsigned id,
+		unsigned severity,
+		int length,
+		const char* message,
+		const void* userParam)
+	{
+		switch (severity)
+		{
+		case GL_DEBUG_SEVERITY_HIGH:		 CRY_CORE_CRITICAL(message); return;
+		case GL_DEBUG_SEVERITY_MEDIUM:		 CRY_CORE_ERROR(message); return;
+		case GL_DEBUG_SEVERITY_LOW:			 CRY_CORE_WARN(message); return;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: CRY_CORE_TRACE(message); return;
+		}
+		CRY_CORE_ASSERT(false, "Unknown severity level!");
+	}
+	
 	void OpenGLRendererAPI::Init()
 	{
+#ifdef CRY_DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
+
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+#endif
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -30,11 +56,14 @@ namespace Crypt {
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
-		if (indexCount == 0) {
-			return; // Do not draw anything if index count is zero
-		}
+		vertexArray->Bind();
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	{
+		vertexArray->Bind();
+		glDrawArrays(GL_LINES, 0, vertexCount);
+	}
 }

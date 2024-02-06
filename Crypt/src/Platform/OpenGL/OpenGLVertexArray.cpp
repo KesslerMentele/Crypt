@@ -21,7 +21,7 @@ namespace Crypt {
 		case ShaderDataType::Int4:	 return GL_INT;
 		case ShaderDataType::Bool:   return GL_BOOL;
 		}
-		CRY_CORE_ASSERT(false, "Unknown Shader Data Type!");
+		CRY_CORE_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}
 

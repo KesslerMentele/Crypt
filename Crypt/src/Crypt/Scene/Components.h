@@ -148,6 +148,8 @@ namespace Crypt {
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 		CircleRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+		CircleRendererComponent(const glm::vec4& color, const float thickness, const float fade)
+			: Color(color), Thickness(thickness), Fade(fade) {}
 	};
 
 
@@ -244,6 +246,8 @@ namespace Crypt {
 
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+		CircleCollider2DComponent(const float radius, const float density, const float friction, const float restitution, const float restitutiionThreshold)
+			: Radius(radius), Density(density), Friction(friction), Restitution(restitution), RestitutionThreshold(restitutiionThreshold) {}
 	};
 
 }
