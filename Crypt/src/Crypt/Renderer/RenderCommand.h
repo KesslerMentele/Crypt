@@ -36,6 +36,11 @@ namespace Crypt {
 			s_RendererAPI->DrawLines(vertexArray, vertexCount);
 		}
 
+		inline static void SetLineWidth(float width)
+		{
+			s_RendererAPI->SetLineWidth(width);
+		}
+
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};

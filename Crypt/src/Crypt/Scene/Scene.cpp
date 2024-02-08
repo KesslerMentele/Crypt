@@ -277,17 +277,17 @@ namespace Crypt {
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
-
+		// Sprite Rendering
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-
 			}
 		}
 
+		// Circle Rendering
 		{
 			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
 			for (auto entity : view)
@@ -298,6 +298,10 @@ namespace Crypt {
 
 			}
 		}
+
+
+		Renderer2D::DrawLine(glm::vec3(3.0f), glm::vec3(5.0f), glm::vec4(1, 0, 1, 1));
+		Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec2(1.0f), glm::vec4(1, 1, 1, 1));
 
 		Renderer2D::EndScene();
 
